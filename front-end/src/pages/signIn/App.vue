@@ -1,17 +1,41 @@
 <template>
   <div id="app">
     <v-app>
-      <v-main style="background-color: #F8F8F7">
+      <v-main>
         <div id="nav">
-          <router-link to="/">Sign-in</router-link>
-          |
-          <router-link to="/signup">Sign-up</router-link>
+          <v-row>
+            <v-col>
+              <v-switch v-model="dark" @click="toggleDarkMode" label="dark mode" style="margin-top: 0"></v-switch>
+            </v-col>
+            <v-col>
+              <router-link to="/">Sign-in</router-link>
+              |
+              <router-link to="/signup">Sign-up</router-link>
+            </v-col>
+          </v-row>
         </div>
         <router-view class="centered"/>
       </v-main>
     </v-app>
   </div>
 </template>
+
+<script>
+export default {
+
+  data() {
+    return {
+      dark: false,
+    }
+  },
+
+  methods: {
+    toggleDarkMode() {
+      this.$vuetify.theme.dark = this.dark;
+    }
+  }
+}
+</script>
 
 <style lang="scss">
 #app {
@@ -27,10 +51,11 @@
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: #039BE5;
+    text-decoration: none;
 
     &.router-link-exact-active {
-      color: #039BE5;
+      text-decoration: underline;
     }
   }
 }
@@ -41,5 +66,9 @@
   left: 50%;
   /* bring your own prefixes */
   transform: translate(-50%, -50%);
+}
+
+.v-application {
+  background-color: var(--v-background-base) !important;
 }
 </style>
