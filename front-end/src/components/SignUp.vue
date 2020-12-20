@@ -62,6 +62,7 @@
                 <v-row>
                   <v-text-field
                       filled
+                      v-model="confirmPassword"
                       :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
                       :rules="[requiredRules, confirmRules]"
                       :type="show2 ? 'text' : 'password'"
@@ -100,6 +101,7 @@ export default {
       lastname: '',
       email: '',
       password: '',
+      confirmPassword: '',
       show1: false,
       show2: false,
       nameRules: v => v.length <= 10 || 'Name must be less than 10 characters',
@@ -121,6 +123,11 @@ export default {
         }
       }
     }
+  },
+
+  deactivated() {
+    this.password = "";
+    this.confirmPassword = "";
   }
 }
 </script>

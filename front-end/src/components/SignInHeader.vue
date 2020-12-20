@@ -29,6 +29,10 @@ export default {
       this.$root.$emit("toggleDarkMode", this.dark);
     },
 
+  },
+
+  activated() {
+    this.dark = this.$store.state.dark;
   }
 }
 </script>

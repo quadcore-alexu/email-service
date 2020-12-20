@@ -92,6 +92,10 @@ export default {
     }
   },
 
+  deactivated() {
+    this.password = "";
+  }
+
 }
 </script>
 

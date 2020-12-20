@@ -30,6 +30,10 @@ export default {
     logout() {
       this.$root.$emit("logOut");
     }
+  },
+
+  activated() {
+    this.dark = this.$store.state.dark;
   }
 }
 </script>
