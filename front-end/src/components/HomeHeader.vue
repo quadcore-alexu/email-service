@@ -1,12 +1,13 @@
 <template>
   <div>
     <v-row>
-      <v-col>
-        <v-switch v-model="dark" @click="toggleDarkMode" label="dark mode"></v-switch>
+      <v-col style="text-align: left">
+        <v-switch v-model="dark" @click="toggleDarkMode" label="dark mode"
+                  style="display: inline-block" class="ma-0 pa-0" hide-details/>
       </v-col>
       <v-col>
-        <div id = "logout">
-          <v-btn color="error" small @click="logout">Logout</v-btn>
+        <div id="logout">
+          <v-btn color="error" x-small @click="logout">Logout</v-btn>
         </div>
       </v-col>
     </v-row>
@@ -40,7 +41,6 @@ export default {
 
 <style lang="scss">
 #logout {
-  padding: 30px;
   text-align: right;
 }
 </style>

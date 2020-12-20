@@ -155,7 +155,7 @@ export default {
 }
 
 .myContainer {
-  padding-right: 5%;
-  padding-left: 5%;
+  padding-right: 4%;
+  padding-left: 4%;
 }
 </style>

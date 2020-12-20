@@ -7,7 +7,6 @@
             <router-view/>
           </keep-alive>
         </v-container>
-
       </v-main>
     </v-app>
   </div>
@@ -19,7 +18,7 @@ export default {
   mounted() {
     this.$root.$on("toggleDarkMode", (state) => {
       this.$vuetify.theme.dark = state;
-      sessionStorage.clear();
+      this.$store.state.dark = null;
       this.$store.commit("setDark", state);
     });
 
@@ -45,3 +44,6 @@ export default {
   background-color: var(--v-background-base) !important;
 }
 </style>
+
+<!--TODO remove cached components on user logout-->
+<!--TODO highlight selected tab in home's navigation drawer-->

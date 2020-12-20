@@ -1,11 +1,12 @@
 <template>
   <div>
     <v-row>
-      <v-col>
-        <v-switch v-model="dark" @click="toggleDarkMode" label="dark mode"></v-switch>
+      <v-col style="text-align: left">
+        <v-switch v-model="dark" @click="toggleDarkMode" label="dark mode"
+                  style="display: inline-block" class="ma-0 pa-0" hide-details/>
       </v-col>
       <v-col>
-        <div id = "nav">
+        <div id="nav">
           <router-link to="/">Sign-in</router-link>
           |
           <router-link to="/signup">Sign-up</router-link>
@@ -39,17 +40,16 @@ export default {
 
 <style lang="scss">
 #nav {
-  padding: 30px;
   text-align: right;
 
-a {
-  font-weight: bold;
-  color: #039BE5;
-  text-decoration: none;
+  a {
+    font-weight: bold;
+    color: #039BE5;
+    text-decoration: none;
 
-&.router-link-exact-active {
-   text-decoration: underline;
- }
+    &.router-link-exact-active {
+      text-decoration: underline;
+    }
 }
 }
 </style>
