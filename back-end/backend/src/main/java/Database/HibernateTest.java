@@ -1,6 +1,7 @@
 package Database;
 
 import Models.*;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -10,23 +11,25 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class HibernateTest {
     public static void main(String[] args) {
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+        StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure().build();
         SessionFactory factory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
         Session session = factory.openSession();
         Transaction trans  = session.beginTransaction();
         // Create user
         User user = new User();
-        user.setAddress("test@quadcore.com");
+        user.setAddress("asmaa123@gmail.com");
         try {
             user.setDOB(new SimpleDateFormat("dd/MM/yyyy").parse("20/04/2000"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        user.setPassword("Ay 7aga");
+
+        user.setPassword("12345");
         session.save(user);
         // user is in database now
         // create folder
@@ -45,11 +48,21 @@ public class HibernateTest {
         f.getHeaders().add(emh);
         emh.setTitle("Hello World");
         session.save(emh);
+
         // retrieve user from the data base
-        User retrievedUser = session.find(User.class, 1);
+        User retrievedUser = session.find(User.class, 19);
         // it comes with his folders and mails
         System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         System.out.println(retrievedUser.getFolders().get(0).getHeaders().get(0).getTitle());
+        String sql = "SELECT * FROM USERS WHERE user_address = :user_address AND user_password= :user_password";
+        SQLQuery query = session.createSQLQuery(sql);
+        query.addEntity(User.class);
+        query.setParameter("user_address", "asmaa@quadcore.com");
+        query.setParameter("user_password","123");
+        List<User> results = query.list();
+        User x=results.get(0);
+        System.out.println(x.getAddress());
+        System.out.println(results.size());
         trans.commit();
         session.close();
         factory.close();

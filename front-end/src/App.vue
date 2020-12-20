@@ -3,9 +3,9 @@
     <v-app>
       <v-main>
         <v-container fluid>
-<!--        <keep-alive>-->
-          <router-view/>
-<!--        </keep-alive>-->
+          <keep-alive>
+            <router-view/>
+          </keep-alive>
         </v-container>
 
       </v-main>
@@ -19,12 +19,16 @@ export default {
   mounted() {
     this.$root.$on("toggleDarkMode", (state) => {
       this.$vuetify.theme.dark = state;
+      sessionStorage.clear();
       this.$store.commit("setDark", state);
     });
 
     this.$root.$on("logOut", () => {
       this.$router.push("/");
     })
+  },
+  created() {
+    this.$vuetify.theme.dark = this.$store.state.dark;
   }
 }
 </script>
