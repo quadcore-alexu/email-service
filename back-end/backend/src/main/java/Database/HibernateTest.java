@@ -15,7 +15,7 @@ import java.util.List;
 
 public class HibernateTest {
     public static void main(String[] args) {
-        StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+        /*StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure().build();
         SessionFactory factory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
         Session session = factory.openSession();
@@ -50,11 +50,14 @@ public class HibernateTest {
         session.save(emh);
 
         // retrieve user from the data base
-        User retrievedUser = session.find(User.class, 19);
+        //User retrievedUser = session.find(User.class, 1);*/
+        UserSession s=new UserSession(5);
+        s.getUserFromDataBase();
+        s.showFolder();
         // it comes with his folders and mails
         System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        System.out.println(retrievedUser.getFolders().get(0).getHeaders().get(0).getTitle());
-        String sql = "SELECT * FROM USERS WHERE user_address = :user_address AND user_password= :user_password";
+        //System.out.println(retrievedUser.getFolders().get(0).getHeaders().get(0).getTitle());
+        /*String sql = "SELECT * FROM USERS WHERE user_address = :user_address AND user_password= :user_password";
         SQLQuery query = session.createSQLQuery(sql);
         query.addEntity(User.class);
         query.setParameter("user_address", "asmaa@quadcore.com");
@@ -62,9 +65,9 @@ public class HibernateTest {
         List<User> results = query.list();
         User x=results.get(0);
         System.out.println(x.getAddress());
-        System.out.println(results.size());
-        trans.commit();
+        System.out.println(results.size());*/
+        /*trans.commit();
         session.close();
-        factory.close();
+        factory.close();*/
     }
 }
