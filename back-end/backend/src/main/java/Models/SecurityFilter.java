@@ -1,4 +1,5 @@
 package Models;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -6,9 +7,11 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+
 
 public class SecurityFilter {
     private static SecurityFilter instance;
@@ -28,6 +31,9 @@ public class SecurityFilter {
         return instance;
     }
 
+    public static synchronized SessionFactory getSessionFactory() {
+        return factory;
+    }
 
     public String authenticateLogin(String encodedUserInfo) {
         String[] decodedUserInfo = getDecodedUserInfo(encodedUserInfo);
@@ -47,8 +53,7 @@ public class SecurityFilter {
         query.setParameter("user_address", email);
         query.setParameter("user_password", password);
         List<User> results = query.list();
-        User u = results.get(0);
-        System.out.println(u.getAddress());
+        System.out.println(results.size());
         trans.commit();
         session.close();
         return results.size() == 1 ? true : false;
@@ -57,10 +62,6 @@ public class SecurityFilter {
 
     private String generateUniqueUUID() {
         return UUID.randomUUID().toString();
-    }
-
-    public static synchronized SessionFactory getSessionFactory() {
-        return factory;
     }
 
     private String[] getDecodedUserInfo(String encodedUserInfo) {
