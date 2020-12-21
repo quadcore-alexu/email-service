@@ -1,68 +1,56 @@
 <template>
-  <div>
-    <v-row>
-      <v-container fluid class="myContainer">
-        <SignInHeader/>
-      </v-container>
-    </v-row>
-    <v-row>
-      <div id="signInComponent" class="centered">
-        <v-card outlined>
-          <v-card-title>
-            <h3>Sign-in</h3>
-          </v-card-title>
+  <div id="signInComponent" class="centered">
+    <v-card outlined>
+      <v-card-title>
+        <h3>Sign-in</h3>
+      </v-card-title>
 
-          <v-card-text style="padding-bottom: 0">
-            <v-form v-model="validForm" ref="form">
-              <v-container>
-                <v-row>
-                  <v-text-field
-                      v-model="email"
-                      filled
-                      label="Email"
-                      append-icon="mdi-close"
-                      @click:append="email = ''"
-                      :rules="[rules.required]"
-                      required
-                  ></v-text-field>
-                </v-row>
-                <v-row>
-                  <v-text-field
-                      filled
-                      label="Password"
-                      v-model="password"
-                      :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                      :type="show ? 'text' : 'password'"
-                      @click:append="show = !show"
-                      :rules="[rules.required]"
-                      required
-                  ></v-text-field>
-                </v-row>
-              </v-container>
-            </v-form>
-          </v-card-text>
+      <v-card-text style="padding-bottom: 0">
+        <v-form ref="form" v-model="validForm">
+          <v-container>
+            <v-row>
+              <v-text-field
+                  v-model="email"
+                  :rules="[rules.required]"
+                  append-icon="mdi-close"
+                  filled
+                  label="Email"
+                  required
+                  @click:append="email = ''"
+              ></v-text-field>
+            </v-row>
+            <v-row>
+              <v-text-field
+                  v-model="password"
+                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                  :rules="[rules.required]"
+                  :type="show ? 'text' : 'password'"
+                  filled
+                  label="Password"
+                  required
+                  @click:append="show = !show"
+              ></v-text-field>
+            </v-row>
+          </v-container>
+        </v-form>
+      </v-card-text>
 
-          <v-card-actions style="padding: 0">
-            <v-container class="btnContainer">
-              <p v-show="!valid" style="color: indianred">Oops! The email or password seems to be incorrect.<br>
-                Try again or <a @click="signUp" class="link">Sign-up instead</a>.</p>
-              <v-btn color="primary" text @click="signIn">Sign-in</v-btn>
-            </v-container>
-          </v-card-actions>
-        </v-card>
-      </div>
-    </v-row>
+      <v-card-actions style="padding: 0">
+        <v-container class="btnContainer">
+          <p v-show="!valid" style="color: indianred">Oops! The email or password seems to be incorrect.<br>
+            Try again or <a class="link" @click="signUp">Sign-up instead</a>.</p>
+          <v-btn color="primary" text @click="signIn">Sign-in</v-btn>
+        </v-container>
+      </v-card-actions>
+    </v-card>
   </div>
 </template>
 
 <script>
 
 
-import SignInHeader from "./SignInHeader";
-
 export default {
   name: "SignIn",
-  components: {SignInHeader},
   data() {
     return {
       email: "",
@@ -96,20 +84,11 @@ export default {
     }
   },
 
-  mounted() {
-    this.$root.$on("goHome", () => {
-      this.$destroy();
-    });
-  },
 
   deactivated() {
     this.password = "";
   },
 
-  created() {
-    this.$store.commit("resetUser");
-    this.$root.$emit("delHome");
-  },
 
 
 }
@@ -139,8 +118,4 @@ export default {
   text-underline: indianred;
 }
 
-.myContainer {
-  padding-right: 4%;
-  padding-left: 4%;
-}
 </style>

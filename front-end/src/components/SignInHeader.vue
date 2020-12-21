@@ -7,9 +7,9 @@
       </v-col>
       <v-col>
         <div id="nav">
-          <router-link to="/">Sign-in</router-link>
+          <v-btn color="primary" small style="font-weight: bold" text @click="goToSignIn">Sign-in</v-btn>
           |
-          <router-link to="/signup">Sign-up</router-link>
+          <v-btn color="primary" small style="font-weight: bold" text @click="goToSignUp">Sign-up</v-btn>
         </div>
       </v-col>
     </v-row>
@@ -29,7 +29,12 @@ export default {
     toggleDarkMode() {
       this.$root.$emit("toggleDarkMode", this.dark);
     },
-
+    goToSignIn() {
+      this.$root.$emit("goToSignIn");
+    },
+    goToSignUp() {
+      this.$root.$emit("goToSignUp");
+    }
   },
 
   activated() {

@@ -7,7 +7,7 @@
       </v-col>
       <v-col>
         <div id="logout">
-          <v-btn color="error" x-small @click="logout">Logout</v-btn>
+          <v-btn color="error" small @click="logout">Logout</v-btn>
         </div>
       </v-col>
     </v-row>

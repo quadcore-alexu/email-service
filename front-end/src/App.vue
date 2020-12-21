@@ -3,9 +3,7 @@
     <v-app>
       <v-main>
         <v-container fluid>
-          <keep-alive>
             <router-view/>
-          </keep-alive>
         </v-container>
       </v-main>
     </v-app>

@@ -82,6 +82,15 @@ import MailList from "./MailList";
 import Compose from "./Compose";
 import MailView from "./MailView";
 
+// window.onbeforeunload = function () {
+//   return "Are you sure you want to close the window? You will be logged out.";
+// }
+//
+// window.onunload = function () {
+//   console.log("reset")
+//   this.$store.commit("resetUser");
+// }
+
 export default {
   name: "Home",
   components: {HomeHeader, MailList},
@@ -146,17 +155,15 @@ export default {
     }
   },
 
-  mounted() {
-    this.$root.$on("delHome", () => {
+  created() {
+    if (this.user === null) {
+      this.$root.$emit("logOut");
       this.$destroy();
-    });
+    }
   },
 
-  created() {
-    if (this.user === null) this.$root.$emit("logOut");
-    else {
-      this.$root.$emit("goHome");
-    }
+  destroyed() {
+    this.$store.commit("resetUser");
   }
 }
 </script>

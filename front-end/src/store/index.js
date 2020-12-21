@@ -20,6 +20,9 @@ const store = new Vuex.Store({
         setUser(state, payload) {
             state.user = payload;
         },
+        setMail(state, payload) {
+            state.openedMail = payload;
+        },
         resetUser(state) {
             state.user = null;
             state.openedMail = null;
