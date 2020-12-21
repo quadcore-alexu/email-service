@@ -117,7 +117,11 @@ export default {
       this.$refs.form.validate();
       if (this.validForm) {
         if (this.email === "a.waleedothman") {
-          this.$store.commit("setUser", "currentUser");
+          this.$store.commit("setUser", {
+            name: "Ahmed Waleed",
+            email: "a.waleedothman@quadcore.com",
+            key: "mockID"
+          });
           this.$router.push("/home")
         } else {
           this.valid = false;

@@ -17,10 +17,10 @@
                   <v-list-item>
                     <v-list-item-content>
                       <v-list-item-title class="title">
-                        {{ user }}
+                        {{ user.name }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
-                        {{ email }}
+                        {{ user.email }}
                       </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
@@ -54,7 +54,7 @@
                 <v-card height="560">
 
                   <keep-alive>
-                    <component v-bind:is="currentComponent"/>
+                    <component :is="currentComponent" v-bind="currentProps"/>
                   </keep-alive>
 
                 </v-card>
@@ -62,9 +62,15 @@
             </v-col>
           </v-row>
         </v-card>
-        <pre class="bottomP">
+        <v-row>
+          <v-col cols="3" style="padding: 0">
+          </v-col>
+          <v-col cols="9" style="padding: 0">
+                    <pre class="bottomP">
         Quadcore.inc  All rights reserved.
       </pre>
+          </v-col>
+        </v-row>
       </v-container>
     </v-row>
   </div>
@@ -74,6 +80,7 @@
 import HomeHeader from "./HomeHeader";
 import MailList from "./MailList";
 import Compose from "./Compose";
+import MailView from "./MailView";
 
 export default {
   name: "Home",
@@ -83,14 +90,28 @@ export default {
     return {
       currentComponent: MailList,
       items: [
-        {title: 'Compose', icon: 'mdi-view-dashboard', key: 1},
-        {title: 'Inbox', icon: 'mdi-image', key: 2},
-        {title: 'Archive', icon: 'mdi-help-box', key: 3},
-        {title: 'Draft', icon: 'mdi-help-box', key: 4},
+        {title: 'Compose', icon: 'mdi-pencil', key: 1},
+        {title: 'Inbox', icon: 'mdi-inbox', key: 2},
+        {title: 'Archive', icon: 'mdi-archive', key: 3},
+        {title: 'Draft', icon: 'mdi-note', key: 4},
+        {title: 'Trash', icon: 'mdi-delete', key: 5},
+        {title: 'Mail View Test', icon: 'mdi-folder', key: 6},
       ],
-
-      email: 'a.waleedothman@quadcore.com',
+      mail: null,
       user: this.$store.getters.getUser,
+    }
+  },
+
+  computed: {
+    currentProps: {
+      get: function () {
+        if (this.currentComponent === MailView) return {mail: this.$store.getters.getMail}
+        else return null;
+      },
+
+      set: function () {
+        //
+      }
     }
   },
 
@@ -98,16 +119,28 @@ export default {
     navigate(key) {
       switch (key) {
         case 1:
+          this.currentProps = null;
           this.currentComponent = Compose;
           break
         case 2:
+          this.currentProps = null;
           this.currentComponent = MailList;
           break
         case 3:
+          this.currentProps = null;
           this.currentComponent = MailList;
           break
         case 4:
+          this.currentProps = null;
           this.currentComponent = MailList;
+          break
+        case 5:
+          this.currentProps = null;
+          this.currentComponent = MailList;
+          break
+        case 6:
+          this.currentProps = {mail: 'cool mail'};
+          this.currentComponent = MailView;
           break
       }
     }
@@ -120,9 +153,10 @@ export default {
   },
 
   created() {
-    this.user = this.$store.getters.getUser;
     if (this.user === null) this.$root.$emit("logOut");
-    else this.$root.$emit("goHome");
+    else {
+      this.$root.$emit("goHome");
+    }
   }
 }
 </script>
