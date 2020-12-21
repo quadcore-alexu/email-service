@@ -10,12 +10,30 @@ const store = new Vuex.Store({
     })],
     state: {
         dark: false,
-        hh: true,
+        user: null,
     },
     mutations: {
         setDark(state, payload) {
             state.dark = payload;
         },
+        setUser(state, payload) {
+            state.user = payload;
+        },
+        resetUser(state) {
+            state.user = null;
+        },
+        resetDark(state) {
+            state.dark = null;
+        },
+    },
+
+    getters: {
+        getUser(state) {
+            return state.user;
+        },
+        getDark(state) {
+            return state.dark;
+        }
     }
 })
 

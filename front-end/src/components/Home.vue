@@ -17,7 +17,7 @@
                   <v-list-item>
                     <v-list-item-content>
                       <v-list-item-title class="title">
-                        {{ name }}
+                        {{ user }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
                         {{ email }}
@@ -52,9 +52,11 @@
             <v-col cols="9">
               <v-container class="compCont">
                 <v-card height="560">
+
                   <keep-alive>
                     <component v-bind:is="currentComponent"/>
                   </keep-alive>
+
                 </v-card>
               </v-container>
             </v-col>
@@ -88,7 +90,7 @@ export default {
       ],
 
       email: 'a.waleedothman@quadcore.com',
-      name: 'Ahmad Waleed',
+      user: this.$store.getters.getUser,
     }
   },
 
@@ -109,6 +111,18 @@ export default {
           break
       }
     }
+  },
+
+  mounted() {
+    this.$root.$on("delHome", () => {
+      this.$destroy();
+    });
+  },
+
+  created() {
+    this.user = this.$store.getters.getUser;
+    if (this.user === null) this.$root.$emit("logOut");
+    else this.$root.$emit("goHome");
   }
 }
 </script>

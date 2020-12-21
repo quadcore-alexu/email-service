@@ -117,6 +117,7 @@ export default {
       this.$refs.form.validate();
       if (this.validForm) {
         if (this.email === "a.waleedothman") {
+          this.$store.commit("setUser", "currentUser");
           this.$router.push("/home")
         } else {
           this.valid = false;
@@ -125,10 +126,20 @@ export default {
     }
   },
 
+  mounted() {
+    this.$root.$on("goHome", () => {
+      this.$destroy();
+    });
+  },
   deactivated() {
     this.password = "";
     this.confirmPassword = "";
-  }
+  },
+
+  created() {
+    this.$store.commit("resetUser");
+    this.$root.$emit("delHome");
+  },
 }
 </script>
 

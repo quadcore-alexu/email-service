@@ -80,10 +80,10 @@ export default {
     signIn() {
       this.$refs.form.validate();
       if (this.validForm) {
-        if (this.password === "admin")
-          this.$router.push("/home")
-        else
-          this.valid = false;
+        if (this.password === "admin") {
+          this.$store.commit("setUser", "currentUser");
+          this.$router.push("/home");
+        } else this.valid = false;
       }
     },
 
@@ -92,9 +92,21 @@ export default {
     }
   },
 
+  mounted() {
+    this.$root.$on("goHome", () => {
+      this.$destroy();
+    });
+  },
+
   deactivated() {
     this.password = "";
-  }
+  },
+
+  created() {
+    this.$store.commit("resetUser");
+    this.$root.$emit("delHome");
+  },
+
 
 }
 </script>

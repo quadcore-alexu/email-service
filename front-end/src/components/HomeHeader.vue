@@ -20,7 +20,7 @@ export default {
 
   data() {
     return {
-      dark: this.$store.state.dark,
+      dark: this.$store.getters.getDark,
     }
   },
 
@@ -29,12 +29,13 @@ export default {
       this.$root.$emit("toggleDarkMode", this.dark);
     },
     logout() {
+      this.$store.commit("resetUser");
       this.$root.$emit("logOut");
     }
   },
 
   activated() {
-    this.dark = this.$store.state.dark;
+    this.dark = this.$store.getters.getDark;
   }
 }
 </script>

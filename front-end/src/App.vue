@@ -18,17 +18,19 @@ export default {
   mounted() {
     this.$root.$on("toggleDarkMode", (state) => {
       this.$vuetify.theme.dark = state;
-      this.$store.state.dark = null;
+      this.$store.commit("resetDark");
       this.$store.commit("setDark", state);
     });
 
     this.$root.$on("logOut", () => {
       this.$router.push("/");
-    })
+    });
+
   },
   created() {
-    this.$vuetify.theme.dark = this.$store.state.dark;
-  }
+    this.$vuetify.theme.dark = this.$store.getters.getDark;
+  },
+
 }
 </script>
 
@@ -45,5 +47,4 @@ export default {
 }
 </style>
 
-<!--TODO remove cached components on user logout-->
 <!--TODO highlight selected tab in home's navigation drawer-->

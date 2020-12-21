@@ -22,7 +22,7 @@ export default {
 
   data() {
     return {
-      dark: this.$store.state.dark,
+      dark: this.$store.getters.getDark
     }
   },
   methods: {
@@ -33,7 +33,7 @@ export default {
   },
 
   activated() {
-    this.dark = this.$store.state.dark;
+    this.dark = this.$store.getters.getDark;
   }
 }
 </script>
