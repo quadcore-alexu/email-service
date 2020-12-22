@@ -4,7 +4,7 @@
       <v-card-title><h3>Sign-up</h3></v-card-title>
 
       <v-card-text style="padding-bottom: 0">
-        <v-form ref="form" v-model="validForm">
+        <v-form v-model="validForm">
           <v-container>
             <v-row>
               <v-col style="padding-left: 0">
@@ -147,8 +147,4 @@ export default {
   padding-top: 0;
 }
 
-.myContainer {
-  padding-right: 4%;
-  padding-left: 4%;
-}
 </style>

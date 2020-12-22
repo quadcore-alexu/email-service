@@ -53,9 +53,12 @@
               <v-container class="compCont">
                 <v-card height="560">
 
-                  <keep-alive>
-                    <component :is="currentComponent" v-bind="currentProps"/>
-                  </keep-alive>
+                  <v-card-text>
+                    <keep-alive>
+                      <component :is="currentComponent" v-bind="currentProps"/>
+                    </keep-alive>
+                  </v-card-text>
+
 
                 </v-card>
               </v-container>
@@ -81,15 +84,6 @@ import HomeHeader from "./HomeHeader";
 import MailList from "./MailList";
 import Compose from "./Compose";
 import MailView from "./MailView";
-
-// window.onbeforeunload = function () {
-//   return "Are you sure you want to close the window? You will be logged out.";
-// }
-//
-// window.onunload = function () {
-//   console.log("reset")
-//   this.$store.commit("resetUser");
-// }
 
 export default {
   name: "Home",
@@ -161,10 +155,6 @@ export default {
       this.$destroy();
     }
   },
-
-  destroyed() {
-    this.$store.commit("resetUser");
-  }
 }
 </script>
 
