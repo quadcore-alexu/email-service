@@ -4,8 +4,11 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class UserSession {
 
@@ -16,7 +19,7 @@ public class UserSession {
 
     public UserSession(int id){
         this.userID=id;
-        currentUser=new User();
+        currentUser= getUserFromDataBase();
     }
 
     public User getUserFromDataBase() {
@@ -24,7 +27,8 @@ public class UserSession {
         Transaction trans  = session.beginTransaction();
 
         currentUser = session.find(User.class, userID);
-
+        System.out.println("Current user address "+currentUser.getAddress());
+        System.out.println("Current user password"+currentUser.getDOB());
         trans.commit();
         session.close();
         return currentUser;
@@ -38,14 +42,18 @@ public class UserSession {
         session.close();
     }*/
 
-    public void sendEmail(Email email,List<String> receiver_address,String [] attachmentPaths){
+    public void sendEmail(Map<String, Object> emailMap, String[] receiver_address, String [] attachmentPaths){
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
-
+        Email email = new Email();
+        System.out.println(email.getAttachments().size());
+        email.setTitle(emailMap.get("title").toString());
+        email.setPriority((int)emailMap.get("priority"));
+        email.setContent(emailMap.get("content").toString());
         email.setSender(currentUser);
         Date date=new Date();
         email.setDate(date);
-
+        session.save(email);
         for(int i=0;i<attachmentPaths.length;i++){
             Attachment attachment=new Attachment();
             attachment.setEmail(email);
@@ -55,14 +63,14 @@ public class UserSession {
         }
 
         String idList="(";
-        for (int i=0;i<receiver_address.size()-1;i++){
-            idList+="'"+receiver_address.get(i)+"'";
+        for (int i=0;i<receiver_address.length-1;i++){
+            idList+="'"+receiver_address[i]+"'";
             idList+=",";
         }
-        idList+="'"+receiver_address.get(receiver_address.size()-1)+"'";
+        idList+="'"+receiver_address[receiver_address.length-1]+"'";
         idList+=")";
 
-        String sql = "SELECT * FROM USERS WHERE user_id IN ";
+        String sql = "SELECT * FROM USERS WHERE user_address IN ";
         sql+=idList;
         SQLQuery query = session.createSQLQuery(sql);
         query.addEntity(User.class);
@@ -79,7 +87,6 @@ public class UserSession {
             session.save(receivers.get(i));
             session.save(emailHeader);
         }
-
         trans.commit();
         session.close();
     }
