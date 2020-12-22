@@ -52,14 +52,9 @@
             <v-col cols="9">
               <v-container class="compCont">
                 <v-card height="560">
-
-                  <v-card-text>
                     <keep-alive>
                       <component :is="currentComponent" v-bind="currentProps"/>
                     </keep-alive>
-                  </v-card-text>
-
-
                 </v-card>
               </v-container>
             </v-col>
@@ -97,8 +92,9 @@ export default {
         {title: 'Inbox', icon: 'mdi-inbox', key: 2},
         {title: 'Archive', icon: 'mdi-archive', key: 3},
         {title: 'Draft', icon: 'mdi-note', key: 4},
-        {title: 'Trash', icon: 'mdi-delete', key: 5},
-        {title: 'Mail View Test', icon: 'mdi-folder', key: 6},
+        {title: 'Sent', icon: 'mdi-telegram', key: 5},
+        {title: 'Trash', icon: 'mdi-delete', key: 6},
+        {title: 'Mail View Test', icon: 'mdi-folder', key: 7},
       ],
       mail: null,
       user: this.$store.getters.getUser,
@@ -142,6 +138,10 @@ export default {
           this.currentComponent = MailList;
           break
         case 6:
+          this.currentProps = null;
+          this.currentComponent = MailList;
+          break
+        case 7:
           this.currentProps = {mail: 'cool mail'};
           this.currentComponent = MailView;
           break
@@ -177,6 +177,7 @@ export default {
 .compCont {
   padding-top: 0;
   padding-bottom: 0;
+  padding-left: 0;
 }
 
 .bottomP {
