@@ -120,19 +120,19 @@ export default {
         {title: 'Draft', icon: 'mdi-note', key: 4},
         {title: 'Trash', icon: 'mdi-delete', key: 5},
         {title: 'Archive', icon: 'mdi-archive', key: 6},
-        {title: 'Mail View Test', icon: 'mdi-folder', key: 7},
       ],
       mail: null,
       user: this.$store.getters.getUser,
       showMask: false,
       maskComponentName: 'contacts',
+      openedMail: null,
     }
   },
 
   computed: {
     currentProps: {
       get: function () {
-        if (this.currentComponent === MailView) return {mail: this.$store.getters.getMail}
+        if (this.currentComponent === MailView) return {mail: this.openedMail}
         else return null;
       },
 
@@ -162,32 +162,22 @@ export default {
     navigate(key) {
       switch (key) {
         case 1:
-          this.currentProps = null;
           this.currentComponent = Compose;
           break
         case 2:
-          this.currentProps = null;
           this.currentComponent = MailList;
           break
         case 3:
-          this.currentProps = null;
           this.currentComponent = MailList;
           break
         case 4:
-          this.currentProps = null;
           this.currentComponent = MailList;
           break
         case 5:
-          this.currentProps = null;
           this.currentComponent = MailList;
           break
         case 6:
-          this.currentProps = null;
           this.currentComponent = MailList;
-          break
-        case 7:
-          this.currentProps = {mail: 'cool mail'};
-          this.currentComponent = MailView;
           break
       }
     },
@@ -208,6 +198,11 @@ export default {
     this.$root.$on("closeMask", () => {
       this.showMask = false;
       this.maskComponentName = null;
+    });
+
+    this.$root.$on("openMail", (mail) => {
+      this.openedMail = mail;
+      this.currentComponent = MailView;
     });
   },
 

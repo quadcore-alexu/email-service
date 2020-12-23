@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{ mailID }}
+    {{ mail }}
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 export default {
   name: "MailView",
 
-  props: ['mailID'],
+  props: ['mail'],
 
   data() {
     return {}

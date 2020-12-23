@@ -4,7 +4,7 @@
       <v-card-title><h3>Sign-up</h3></v-card-title>
 
       <v-card-text style="padding-bottom: 0">
-        <v-form v-model="validForm">
+        <v-form ref="form" v-model="validForm">
           <v-container>
             <v-row>
               <v-col style="padding-left: 0">
@@ -31,7 +31,7 @@
             <v-row>
               <v-text-field
                   v-model="email"
-                  :rules="[requiredRules]"
+                  :rules="[requiredRules, emailRules]"
                   filled
                   label="E-mail"
                   placeholder="example: a.waleedothman"
@@ -95,6 +95,7 @@ export default {
       requiredRules: value => !!value || 'Required',
       minRules: v => v.length >= 8 || 'Min 8 characters',
       confirmRules: v => v === this.password || 'Passwords not matching',
+      emailRules: v => !/@/.test(v) || 'Invalid email address',
       valid: true,
     }
   },
