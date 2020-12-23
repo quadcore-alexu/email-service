@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="modal-body">
-      <component :is="currentComponent" v-bind="currentProps"/>
+      <v-card>
+        <component :is="currentComponent" v-bind="currentProps"/>
+      </v-card>
     </div>
 
     <v-btn color="accent" text @click="closeContacts">
@@ -23,13 +25,14 @@ export default {
     return {
       currentComponent: ContactsList,
       selectedContact: null,
+      isNew: false,
     }
   },
 
   computed: {
     currentProps: {
       get: function () {
-        if (this.currentComponent === ContactView) return {contact: this.selectedContact}
+        if (this.currentComponent === ContactView) return {contact: this.selectedContact, isNew: this.isNew}
         else return null;
       },
 
@@ -51,7 +54,14 @@ export default {
     });
 
     this.$root.$on("viewContact", (contact) => {
+      this.isNew = false;
       this.selectedContact = contact;
+      this.currentComponent = ContactView;
+    });
+
+    this.$root.$on("addContact", () => {
+      this.isNew = true;
+      this.selectedContact = {name: '', emails: ''};
       this.currentComponent = ContactView;
     });
   }

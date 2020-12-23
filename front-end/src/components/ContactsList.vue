@@ -1,21 +1,26 @@
 <template>
   <div>
-    <v-list
-        dense
-        nav
-    >
-      <v-list-item
-          v-for="item in list"
-          :key="item.ID"
-          link
-          @click="viewContact(item)"
-      >
-        <v-list-item-content>
-          <v-list-item-title>{{ item.name }}</v-list-item-title>
-        </v-list-item-content>
+    <v-card-text>
+      <v-card outlined>
+        <v-list class="overflow-y-auto" dense max-height="256px" nav>
+          <v-list-item
+              v-for="item in list"
+              :key="item.ID"
+              link
+              @click="viewContact(item)">
+            <v-list-item-content>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item-content>
 
-      </v-list-item>
-    </v-list>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-card-text>
+    <v-card-actions>
+      <v-container>
+        <v-btn color="primary" @click="addNew">Add</v-btn>
+      </v-container>
+    </v-card-actions>
   </div>
 </template>
 
@@ -26,8 +31,8 @@ export default {
   data() {
     return {
       list: [
-        {name: 'Contact 1', ID: '55', emails: ['a.waleed', 'a.waleed2']},
-        {name: 'Contact 2', ID: '56', emails: ['aaa', 'aaa2']}
+        {name: 'Contact 1', ID: '55', emails: "a.waleed;waleed;hey;"},
+        {name: 'Contact 2', ID: '56', emails: "aaaa;aaa2;adw;"},
       ]
     }
   },
@@ -35,7 +40,14 @@ export default {
   methods: {
     viewContact(contact) {
       this.$root.$emit("viewContact", contact);
+    },
+    addNew() {
+      this.$root.$emit("addContact");
     }
+  },
+
+  created() {
+    //TODO load contact list
   }
 }
 </script>

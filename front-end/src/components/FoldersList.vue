@@ -1,6 +1,8 @@
 <template>
   <div>
-    FolderList
+    <v-card-text>
+      FolderList
+    </v-card-text>
   </div>
 </template>
 

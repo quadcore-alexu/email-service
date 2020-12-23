@@ -24,7 +24,10 @@ export default {
   computed: {
     bgColor: {
       get: function () {
-        return {'background-color': this.$store.getters.getDark ? '#212121' : '#F8F8F7'}
+        return {
+          'background-color': this.$store.getters.getDark ?
+              this.$vuetify.theme.themes.dark.background : this.$vuetify.theme.themes.light.background
+        }
       },
 
       set: function () {

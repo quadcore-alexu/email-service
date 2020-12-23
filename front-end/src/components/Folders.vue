@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="modal-body">
-      <FoldersList/>
+      <v-card>
+        <FoldersList/>
+      </v-card>
     </div>
     <v-btn color="accent" text @click="closeFolders">
       Close
