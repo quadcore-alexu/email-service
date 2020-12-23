@@ -217,10 +217,14 @@ public class UserSession {
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         org.hibernate.Criteria cr = session.createCriteria(EmailHeader.class);
-        cr.setFirstResult(pageNumber*6-5);
+        int n=(pageNumber*6)-6;
+        cr.setFirstResult(n);
         cr.setMaxResults(6);
         List<EmailHeader> emailHeaders  = cr.list();
-        System.out.println(emailHeaders.size());
+
+        for (int i=0;i<emailHeaders.size();i++)
+            System.out.println(emailHeaders.get(i).getEmailHeaderID());
+
         trans.commit();
         session.close();
 
