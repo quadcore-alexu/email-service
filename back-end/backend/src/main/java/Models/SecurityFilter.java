@@ -7,15 +7,15 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.springframework.stereotype.Service;
 
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 public class SecurityFilter {
     private static SecurityFilter instance;
     private static SessionFactory factory;
+    private HashMap<String,UserSession> userSessions= new HashMap<>();
 
     private SecurityFilter() {
     }
@@ -26,6 +26,7 @@ public class SecurityFilter {
             final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                     .configure().build();
             factory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
+
 
         }
         return instance;
@@ -39,12 +40,29 @@ public class SecurityFilter {
         String[] decodedUserInfo = getDecodedUserInfo(encodedUserInfo);
         String email = decodedUserInfo[0];
         String password = decodedUserInfo[1];
-        boolean isAuthenticatedUser = matchesDB(email, password);
-        return isAuthenticatedUser ? generateUniqueUUID() : "null";
+        int loggedInUserID=matchesDB(email,password);
+        if(loggedInUserID!=-1){
+            String userSessionID=generateUniqueUUID();
+            userSessions.put(userSessionID,new UserSession(loggedInUserID));
+            return userSessionID;
+        }
+
+        return "null";
+    }
+
+    public Map<String,Object> generateBasicInfo(String userSessionID)
+    {
+        String authenticatedUserName=userSessions.get(userSessionID).getCurrentUser().getUserName();
+        Map<String,Object> basicInfo=new HashMap<>();
+        basicInfo.put("key",userSessionID);
+        basicInfo.put("name",authenticatedUserName);
+        basicInfo.put("folder names",userSessions.get(userSessionID).getFolderNames());
+        basicInfo.put("authenticated","true");
+        return basicInfo;
 
     }
 
-    private boolean matchesDB(String email, String password) {
+    private int matchesDB(String email, String password) {
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         String sql = "SELECT * FROM USERS WHERE  user_address = :user_address AND user_password= :user_password";
@@ -56,8 +74,13 @@ public class SecurityFilter {
         System.out.println(results.size());
         trans.commit();
         session.close();
-        return results.size() == 1 ? true : false;
+        return results.size() == 1 ? results.get(0).getUserID() : -1;
 
+    }
+    private UserSession createUserSession(Integer userID)
+    {
+        UserSession userSession=new UserSession(userID);
+        return userSession;
     }
 
     private String generateUniqueUUID() {
