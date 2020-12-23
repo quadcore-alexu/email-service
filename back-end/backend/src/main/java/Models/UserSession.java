@@ -11,7 +11,6 @@ import java.util.Map;
 public class UserSession {
 
     private int userID;
-
     private User currentUser;
     private SessionFactory factory = SecurityFilter.getInstance().getSessionFactory();
 
@@ -19,18 +18,8 @@ public class UserSession {
         this.userID=id;
         currentUser=getUserFromDataBase();
 
-        Session session = factory.openSession();
-        Transaction trans = session.beginTransaction();
-        Folder f=new Folder();
-        f.setOwner(currentUser);
-        currentUser.getFolders().add(f);
-        session.save(f);
-        Folder m=new Folder();
-        m.setOwner(currentUser);
-        currentUser.getFolders().add(m);
-        session.save(m);
-        trans.commit();
     }
+
 
     public User getUserFromDataBase() {
         Session session = factory.openSession();
@@ -186,6 +175,46 @@ public class UserSession {
         return emailHeaders;
     }
 
+    public void addFolder(Map<String, Object> folderMap){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        Folder folder = new Folder();
+        folder.setOwner(currentUser);
+        folder.setFolderName(folderMap.get("name").toString());
+        currentUser.getFolders().add(folder);
+        session.save(folder);
+        trans.commit();
+        session.close();
+    }
+
+    public void editFolder(Map<String, Object> folderMap){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        Folder folder = session.find(Folder.class, folderMap.get("id"));
+        folder.setOwner(currentUser);
+        folder.setFolderName(folderMap.get("name").toString());
+        session.save(folder);
+        trans.commit();
+        session.close();
+
+    }
+
+    public void removeFolder(int folderID){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        Folder folder = session.find(Folder.class, folderID);
+        folder.setOwner(currentUser);
+        currentUser.getFolders().remove(folder);
+        session.save(currentUser);
+        trans.commit();
+        session.close();
+        System.out.println(currentUser.getFolders().size());
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
     public void test(){
         Session session = factory.openSession();
         int x=currentUser.getFolders().get(1).getHeaders().size();
@@ -194,5 +223,6 @@ public class UserSession {
         System.out.println(y);
         session.close();
     }
+
 
 }

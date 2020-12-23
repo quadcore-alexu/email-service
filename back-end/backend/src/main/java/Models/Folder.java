@@ -17,6 +17,8 @@ public class Folder {
     @JoinColumn(name="owner_id", nullable = false)
     private User owner;
 
+    @Column(name="folder_name")
+    private String folderName;
     @OneToMany(mappedBy = "folder")
     private List<EmailHeader> headers = new ArrayList<EmailHeader>();
 
@@ -42,5 +44,12 @@ public class Folder {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
     }
 }
