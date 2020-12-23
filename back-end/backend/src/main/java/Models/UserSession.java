@@ -4,6 +4,8 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -211,9 +213,36 @@ public class UserSession {
         System.out.println(currentUser.getFolders().size());
     }
 
+    public List<EmailHeader> paging(int pageNumber){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        org.hibernate.Criteria cr = session.createCriteria(EmailHeader.class);
+        cr.setFirstResult(pageNumber*6-5);
+        cr.setMaxResults(6);
+        List<EmailHeader> emailHeaders  = cr.list();
+        System.out.println(emailHeaders.size());
+        trans.commit();
+        session.close();
+
+        return emailHeaders;
+    }
+
+    public List<String> getFolderNames() {
+        List folders = this.currentUser.getFolders();
+        List<String> folderNames = new ArrayList<>();
+        for (int i = 0; i < folders.size(); i++) {
+            Folder f= (Folder) folders.get(i);
+            folderNames.add(f.getFolderName());
+
+        }
+        return folderNames;
+    }
+
     public User getCurrentUser() {
         return currentUser;
     }
+
+
 
     public void test(){
         Session session = factory.openSession();
