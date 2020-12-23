@@ -46,15 +46,37 @@
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
+                  <template v-slot:append>
+                    <div class="py-2 px-4">
+                      <v-row>
+                        <v-col>
+                          <v-btn block color="accent">
+                            <v-icon left>
+                              mdi-folder
+                            </v-icon>
+                            Folders
+                          </v-btn>
+                        </v-col>
+                        <v-col>
+                          <v-btn block color="accent">
+                            <v-icon left>
+                              mdi-account-multiple
+                            </v-icon>
+                            Contacts
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </div>
+                  </template>
                 </v-navigation-drawer>
               </v-card>
             </v-col>
             <v-col cols="9">
               <v-container class="compCont">
                 <v-card height="560">
-                    <keep-alive>
-                      <component :is="currentComponent" v-bind="currentProps"/>
-                    </keep-alive>
+                  <keep-alive>
+                    <component :is="currentComponent" v-bind="currentProps"/>
+                  </keep-alive>
                 </v-card>
               </v-container>
             </v-col>
@@ -90,10 +112,10 @@ export default {
       items: [
         {title: 'Compose', icon: 'mdi-pencil', key: 1},
         {title: 'Inbox', icon: 'mdi-inbox', key: 2},
-        {title: 'Archive', icon: 'mdi-archive', key: 3},
+        {title: 'Sent', icon: 'mdi-telegram', key: 3},
         {title: 'Draft', icon: 'mdi-note', key: 4},
-        {title: 'Sent', icon: 'mdi-telegram', key: 5},
-        {title: 'Trash', icon: 'mdi-delete', key: 6},
+        {title: 'Trash', icon: 'mdi-delete', key: 5},
+        {title: 'Archive', icon: 'mdi-archive', key: 6},
         {title: 'Mail View Test', icon: 'mdi-folder', key: 7},
       ],
       mail: null,

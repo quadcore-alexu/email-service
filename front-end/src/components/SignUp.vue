@@ -105,7 +105,7 @@ export default {
       if (this.validForm) {
         if (this.email === "a.waleedothman") {
           this.$store.commit("setUser", {
-            name: "Ahmed Waleed",
+            name: "Ahmad Waleed",
             email: "a.waleedothman@quadcore.com",
             key: "mockID"
           });

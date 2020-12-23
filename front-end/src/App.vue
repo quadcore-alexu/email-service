@@ -44,5 +44,3 @@ export default {
   background-color: var(--v-background-base) !important;
 }
 </style>
-
-<!--TODO highlight selected tab in home's navigation drawer-->

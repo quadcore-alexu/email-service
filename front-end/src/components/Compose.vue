@@ -1,82 +1,86 @@
 <template>
   <div class="fill-height">
     <v-form v-model="validForm" class="fill-height">
-      <v-flex>
-          <v-card-text>
-            <v-row>
-              <v-text-field
-                  v-model="subject"
-                  label="Subject"
-              ></v-text-field>
-            </v-row>
-             <v-row>
-                <div class="receivers-container">
-                  <div class="receiver" v-for="(receiver, index) in receivers" :key="'receiver'+index">
-                    <span v-if="selectedReceiver !== index" @click="selectedReceiver = index">{{ receiver }}</span>
-                    <input v-else 
-                          v-model="receivers[index]" 
-                          v-focus 
-                          :style="{'width': receiver.length + 'ch'}" 
-                          @keyup.space="selectedReceiver = null" 
-                          @blur="selectedReceiver = null" />
-                    <span @click="removeReceiver(index)"><i class="fas fa-times-circle"></i></span>
-                  </div>
-                  <div style="clear:both"/>
-                  <v-text-field
-                    v-model="receiverValue"
-                    label="To:"
-                    @keyup.space="addReceiver"
-                  ></v-text-field> 
-                </div>
-              </v-row>
-              <v-row>
-                <v-col
-                  class="d-flex"
-                  cols="12"
-                  sm="6">
-                  <v-slider
-                      v-model="priority"
-                      label="Priority"
-                      thumb-color="red"
-                      :tick-labels="priorityLevels"
-                      max="5"
-                      min="1"
-                      tick-size="5"
-                    ></v-slider>
-                  </v-col>
-              </v-row>
-            <v-row>
-              <v-textarea
-                  v-model="content"
-                  counter
-                  label="Body"
-              />
-            </v-row>
-            <v-row>
-              <v-file-input
-                  :key="temp"
-                  ref="attachments"
-                  v-model="files"
-                  chips
-                  counter
-                  label="Attachments"
-                  multiple
-                  @change="filesChanged"
-                  @click:clear="clearFiles"
-              />
-            </v-row>
-          </v-card-text>
-          <v-card-actions>
-            <v-container style="text-align: right">
-              <v-btn @click="send">
-                <v-icon left>
-                  mdi-send
-                </v-icon>
-                Send
-              </v-btn>
-            </v-container>
-          </v-card-actions>
-        </v-flex>
+      <v-card-text>
+        <v-row>
+          <v-col>
+            <v-text-field
+                v-model="subject"
+                label="Subject"
+            ></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field
+                v-model="receiverValue"
+                hint="hit enter or space to add"
+                label="To:"
+                @keyup.enter.space="addReceiver"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col
+              class="d-flex"
+              cols="12"
+              sm="6">
+            <v-slider
+                v-model="priority"
+                :tick-labels="priorityLevels"
+                label="Priority"
+                max="4"
+                min="1"
+                thumb-color="red"
+                tick-size="5"
+            ></v-slider>
+          </v-col>
+          <v-col>
+            <div class="receivers-container">
+              <div v-for="(receiver, index) in receivers" :key="'receiver'+index" class="receiver">
+                <span v-if="selectedReceiver !== index" @click="selectedReceiver = index">{{ receiver }}</span>
+                <input v-else
+                       v-model="receivers[index]"
+                       v-focus
+                       :style="{'width': receiver.length + 'ch'}"
+                       @blur="selectedReceiver = null"
+                       @keyup.space="selectedReceiver = null"/>
+                <span @click="removeReceiver(index)"><i class="fas fa-times-circle"></i></span>
+              </div>
+              <div style="clear:both"/>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-textarea
+              v-model="content"
+              counter
+              label="Body"
+          />
+        </v-row>
+        <v-row>
+          <v-file-input
+              :key="temp"
+              ref="attachments"
+              v-model="files"
+              chips
+              counter
+              label="Attachments"
+              multiple
+              @change="filesChanged"
+              @click:clear="clearFiles"
+          />
+        </v-row>
+      </v-card-text>
+      <v-card-actions style="  position: absolute; bottom: 0; right:0;">
+        <v-container>
+          <v-btn color="accent" @click="send">
+            <v-icon left>
+              mdi-send
+            </v-icon>
+            Send
+          </v-btn>
+        </v-container>
+      </v-card-actions>
+
     </v-form>
   </div>
 </template>
@@ -90,15 +94,14 @@ export default {
   data() {
     return {
       validForm: false,
-      content:'',
+      content: '',
       subject: '',
-      priorityLevels : [
+      priorityLevels: [
         'Minor',
         'Regular',
         'Important',
-        'Essential',
         'Crucial'
-        ],
+      ],
       requiredRules: value => !!value || 'Required',
       files: [],
       allFiles: [],
@@ -106,7 +109,7 @@ export default {
       receiverValue: '',
       receivers: [],
       selectedReceiver: null,
-      priority:3
+      priority: 3
     }
   },
   methods: {
@@ -126,9 +129,9 @@ export default {
       this.allFiles = [];
     },
     addReceiver() {
-      if(!this.receiverValue == '')
+      if (!this.receiverValue == '')
         this.receivers.push(this.receiverValue);
-      
+
       this.receiverValue = '';
     },
     removeReceiver(index) {
@@ -137,15 +140,15 @@ export default {
     send() {
       console.log("Hello");
       if (this.receivers.length == 0) {
-          alert("Please type receiver address followed by space")
-          return
+        alert("Please type receiver address followed by space")
+        return
       }
       let formData = new FormData();
       let email = new Email();
       email.title = this.subject;
       email.content = this.content;
       email.priority = this.priority;
-      let receiverStr = ''; 
+      let receiverStr = '';
       this.receivers.forEach(element => receiverStr += element);
       formData.append("email", JSON.stringify(email));
       formData.append("receivers", receiverStr);
@@ -155,58 +158,63 @@ export default {
           "Content-Type": "multipart/form-data"
         }
       })
-      .then(() => {
-        console.log("Succeeded");  
-      })
-      .catch(error  => {
-        console.log(error);
-      });
+          .then(() => {
+            console.log("Succeeded");
+          })
+          .catch(error => {
+            console.log(error);
+          });
     }
   },
   directives: {
-      focus: {
-        inserted: (el) => {
-          el.focus()
-        }
+    focus: {
+      inserted: (el) => {
+        el.focus()
       }
     }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-   .receivers-container {
+.receivers-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+
+  input {
     width: 100%;
-    max-width: 600px;
-    padding: 10px;
-    
-    input {
-      width: 100%;
-      padding: 0;
-      margin: 0;
-      border: 0;
-      outline: none;
-      background-color: transparent;
-      font-size: 1rem;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    outline: none;
+    background-color: transparent;
+    font-size: 1rem;
+  }
+
+  .receiver {
+    float: left;
+    padding: 3px 5px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #ff5057;
+      border-radius: 5px;
     }
-    .receiver {
-      float: left;
-      padding: 3px 5px;
-      display: flex;
-      justify-content: center;
-      cursor: pointer;
+
+    span:first-child {
+      margin-right: 8px;
+    }
+
+    svg {
+      color: #666;
+
       &:hover {
-        background-color: #ff5057;
-        border-radius: 5px;
-      } 
-      span:first-child {
-        margin-right: 8px;
-      }  
-      svg {
-        color: #666;
-        &:hover {
-          color: #333;
-        }
-      }     
+        color: #333;
+      }
     }
   }
+}
 </style>

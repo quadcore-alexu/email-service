@@ -70,7 +70,7 @@ export default {
       if (this.validForm) {
         if (this.password === "admin") {
           this.$store.commit("setUser", {
-            name: "Ahmed Waleed",
+            name: "Ahmad Waleed",
             email: "a.waleedothman@quadcore.com",
             key: "mockID"
           });
