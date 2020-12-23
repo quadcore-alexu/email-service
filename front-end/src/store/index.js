@@ -11,7 +11,6 @@ const store = new Vuex.Store({
     state: {
         dark: false,
         user: null,
-        openedMail: null,
     },
     mutations: {
         setDark(state, payload) {
@@ -19,9 +18,6 @@ const store = new Vuex.Store({
         },
         setUser(state, payload) {
             state.user = payload;
-        },
-        setMail(state, payload) {
-            state.openedMail = payload;
         },
         resetUser(state) {
             state.user = null;
@@ -35,9 +31,6 @@ const store = new Vuex.Store({
     getters: {
         getUser(state) {
             return state.user;
-        },
-        getMail(state) {
-            return state.openedMail;
         },
         getDark(state) {
             return state.dark;

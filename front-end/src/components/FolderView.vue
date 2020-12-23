@@ -6,20 +6,15 @@
           <v-icon>mdi-keyboard-backspace</v-icon>
         </v-btn>
       </v-row>
-
       <v-container>
         <v-form ref="form" v-model="validForm">
           <v-row>
             <v-text-field
                 v-model="name"
-                label="Name"
                 :rules="[requiredRules]"
                 clearable
+                label="Name"
             />
-          </v-row>
-          <v-row>
-            <v-textarea v-model="emails" hint="enter emails separated by semicolon or newline"
-                        class="overflow-y-auto" label="Emails" persistent-hint rows="5"/>
           </v-row>
         </v-form>
       </v-container>
@@ -34,13 +29,12 @@
 
 <script>
 export default {
-  name: "ContactView",
-  props: ['contact', 'isNew'],
+  name: "FolderView",
+  props: ['folder', 'isNew'],
 
   data() {
     return {
-      name: this.contact.name,
-      emails: this.contact.emails.replaceAll(";", ";\n"),
+      name: this.folder.name,
       validForm: false,
       requiredRules: value => !!value || 'Required',
     }
@@ -48,7 +42,7 @@ export default {
 
   methods: {
     back() {
-      this.$root.$emit("contactsList");
+      this.$root.$emit("foldersList");
     },
 
     save() {
@@ -59,8 +53,7 @@ export default {
         //add to list
       }
     }
-  },
-
+  }
 }
 </script>
 
