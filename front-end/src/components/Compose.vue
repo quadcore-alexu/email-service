@@ -35,7 +35,7 @@
           </v-col>
           <v-col>
             <div class="receivers-container">
-              <div v-for="(receiver, index) in receivers" :key="'receiver'+index" class="receiver">
+              <div v-for="(receiver, index) in receivers" :key="'receiver'+index" :style="cssVars" class="receiver">
                 <span v-if="selectedReceiver !== index" @click="selectedReceiver = index">{{ receiver }}</span>
                 <input v-else
                        v-model="receivers[index]"
@@ -178,6 +178,24 @@ export default {
         el.focus()
       }
     }
+  },
+
+  computed: {
+    cssVars() {
+      return {
+        '--accent-color': this.accentColor,
+      }
+    },
+    accentColor: {
+      get: function () {
+        return this.$vuetify.theme.dark ?
+            this.$vuetify.theme.themes.dark.accent : this.$vuetify.theme.themes.light.accent;
+      },
+      set: function () {
+        //
+      }
+    }
+
   }
 }
 </script>
@@ -206,7 +224,7 @@ export default {
     cursor: pointer;
 
     &:hover {
-      background-color: #ff5057;
+      background-color: var(--accent-color);
       border-radius: 5px;
     }
 

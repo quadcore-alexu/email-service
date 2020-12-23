@@ -9,7 +9,7 @@
               link
               @click="viewContact(item)">
             <v-list-item-content>
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-title><h3>{{ item.name }}</h3></v-list-item-title>
             </v-list-item-content>
 
           </v-list-item>
@@ -33,6 +33,7 @@ export default {
       list: [
         {name: 'Contact 1', ID: '55', emails: "a.waleed;waleed;hey;"},
         {name: 'Contact 2', ID: '56', emails: "aaaa;aaa2;adw;"},
+
       ]
     }
   },

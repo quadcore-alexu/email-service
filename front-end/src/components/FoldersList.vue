@@ -9,7 +9,7 @@
               link
               @click="viewFolder(item)">
             <v-list-item-content>
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-title><h3>{{ item.name }}</h3></v-list-item-title>
             </v-list-item-content>
 
           </v-list-item>
