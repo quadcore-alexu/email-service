@@ -47,7 +47,9 @@
 </template>
 
 <script>
-import signInService from "@/service/signInService";
+
+
+import signInservice from "@/service/signInservice";
 
 export default {
   name: "SignIn",
@@ -68,7 +70,7 @@ export default {
     async signIn() {
       this.$refs.form.validate();
       if (this.validForm) {
-        const basicLoginInfo = await signInService.fetchLogin(this.email, this.password)
+        const basicLoginInfo = await signInservice.fetchLogin(this.email, this.password)
         let isAuthenticatedUser = basicLoginInfo['authenticated']
         if (isAuthenticatedUser == "true") {
           this.$store.commit("setUser", {
@@ -81,11 +83,12 @@ export default {
           console.log(basicLoginInfo['folder names'])
           await this.$router.push("/home");
         }
+        else this.valid = false;
         //console.log(this.email)
         //console.log(this.password)
 
 
-      } else this.valid = false;
+      }
     },
 
     signUp() {
