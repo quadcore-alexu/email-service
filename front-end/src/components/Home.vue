@@ -1,5 +1,6 @@
 <template>
   <div>
+    <MyMask v-if="showMask" v-bind="maskComponent"/>
     <v-row>
       <v-container fluid class="myContainer">
         <HomeHeader/>
@@ -50,7 +51,7 @@
                     <div class="py-2 px-4">
                       <v-row>
                         <v-col>
-                          <v-btn block color="accent">
+                          <v-btn block color="accent" @click="openFolders">
                             <v-icon left>
                               mdi-folder
                             </v-icon>
@@ -58,7 +59,7 @@
                           </v-btn>
                         </v-col>
                         <v-col>
-                          <v-btn block color="accent">
+                          <v-btn block color="accent" @click="openContacts">
                             <v-icon left>
                               mdi-account-multiple
                             </v-icon>
@@ -87,7 +88,7 @@
           </v-col>
           <v-col cols="9" style="padding: 0">
                     <pre class="bottomP">
-        Quadcore.inc  All rights reserved.
+        Quadcore.inc  All rights reserved
       </pre>
           </v-col>
         </v-row>
@@ -101,10 +102,13 @@ import HomeHeader from "./HomeHeader";
 import MailList from "./MailList";
 import Compose from "./Compose";
 import MailView from "./MailView";
+import MyMask from "./MyMask";
+import Contacts from "./Contacts";
+import Folders from "./Folders";
 
 export default {
   name: "Home",
-  components: {HomeHeader, MailList},
+  components: {MyMask, Folders, Contacts, HomeHeader, MailList},
 
   data() {
     return {
@@ -120,6 +124,8 @@ export default {
       ],
       mail: null,
       user: this.$store.getters.getUser,
+      showMask: false,
+      maskComponentName: 'contacts',
     }
   },
 
@@ -133,7 +139,23 @@ export default {
       set: function () {
         //
       }
-    }
+    },
+    maskComponent: {
+      get: function () {
+        if (this.showMask === true) {
+          if (this.maskComponentName === 'contacts')
+            return {component: Contacts};
+          else if (this.maskComponentName === 'folders')
+            return {component: Folders};
+          else return null;
+        } else return null;
+      },
+
+      set: function () {
+        //
+      }
+    },
+
   },
 
   methods: {
@@ -168,7 +190,25 @@ export default {
           this.currentComponent = MailView;
           break
       }
+    },
+
+    openContacts() {
+      this.maskComponentName = 'contacts';
+      this.showMask = true;
+    },
+
+    openFolders() {
+      this.maskComponentName = 'folders';
+      this.showMask = true;
     }
+
+  },
+
+  mounted() {
+    this.$root.$on("closeMask", () => {
+      this.showMask = false;
+      this.maskComponentName = null;
+    });
   },
 
   created() {

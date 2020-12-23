@@ -68,13 +68,14 @@ export default {
     signIn() {
       this.$refs.form.validate();
       if (this.validForm) {
-        if (this.password === "admin") {
-          this.$store.commit("setUser", {
+        if (this.password === "admin" /*check password*/) {
+          //send request and get user
+          this.$store.commit("setUser", { //set user
             name: "Ahmad Waleed",
             email: "a.waleedothman@quadcore.com",
             key: "mockID"
           });
-          this.$router.push("/home");
+          this.$router.push("/home"); //open home
         } else this.valid = false;
       }
     },

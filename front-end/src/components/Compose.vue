@@ -13,7 +13,7 @@
             <v-text-field
                 v-model="receiverValue"
                 hint="hit enter or space to add"
-                label="To:"
+                label="To"
                 @keyup.enter.space="addReceiver"
             ></v-text-field>
           </v-col>
@@ -30,7 +30,7 @@
                 max="4"
                 min="1"
                 thumb-color="red"
-                tick-size="5"
+                tick-size="3"
             ></v-slider>
           </v-col>
           <v-col>
@@ -50,24 +50,30 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-textarea
-              v-model="content"
-              counter
-              label="Body"
-          />
+          <v-col>
+            <v-textarea
+                v-model="content"
+                counter
+                label="Body"
+                outlined
+            />
+          </v-col>
         </v-row>
         <v-row>
-          <v-file-input
-              :key="temp"
-              ref="attachments"
-              v-model="files"
-              chips
-              counter
-              label="Attachments"
-              multiple
-              @change="filesChanged"
-              @click:clear="clearFiles"
-          />
+          <v-col class="pt-0">
+            <v-file-input
+                :key="temp"
+                ref="attachments"
+                v-model="files"
+                chips
+                counter
+                label="Attachments"
+                multiple
+                @change="filesChanged"
+                @click:clear="clearFiles"
+            />
+          </v-col>
+
         </v-row>
       </v-card-text>
       <v-card-actions style="  position: absolute; bottom: 0; right:0;">
@@ -109,7 +115,7 @@ export default {
       receiverValue: '',
       receivers: [],
       selectedReceiver: null,
-      priority: 3
+      priority: 2
     }
   },
   methods: {
