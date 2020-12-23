@@ -4,8 +4,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,34 +17,48 @@ public class UserSession {
 
     public UserSession(int id){
         this.userID=id;
-        currentUser= getUserFromDataBase();
+        currentUser=getUserFromDataBase();
+
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        Folder f=new Folder();
+        f.setOwner(currentUser);
+        currentUser.getFolders().add(f);
+        session.save(f);
+        Folder m=new Folder();
+        m.setOwner(currentUser);
+        currentUser.getFolders().add(m);
+        session.save(m);
+        trans.commit();
     }
 
     public User getUserFromDataBase() {
         Session session = factory.openSession();
         Transaction trans  = session.beginTransaction();
-
         currentUser = session.find(User.class, userID);
-        System.out.println("Current user address "+currentUser.getAddress());
-        System.out.println("Current user password"+currentUser.getDOB());
         trans.commit();
         session.close();
         return currentUser;
     }
-
-    /*public void showFolder(){
+    public Email getMail(int emailId){
         Session session = factory.openSession();
         Transaction trans  = session.beginTransaction();
-        String x=user.getFolders().get(0).getHeaders().get(0).getTitle();
-        System.out.println(x);
+        Email email = session.find(Email.class, emailId);
+        trans.commit();
         session.close();
-    }*/
+        return email;
+    }
 
-    public void sendEmail(Map<String, Object> emailMap, String[] receiver_address, String [] attachmentPaths){
+    public EmailHeader createEmailHeader(Email email){
+        EmailHeader emailHeader = new EmailHeader();
+        emailHeader.setTitle(email.getTitle());
+        emailHeader.setSender(currentUser);
+        emailHeader.setDate(email.getDate());
+        emailHeader.setPriority(email.getPriority());
+        return emailHeader;
+    }
+    public void setEmailContent(Email email,Map<String, Object> emailMap,String [] attachmentPaths){
         Session session = factory.openSession();
-        Transaction trans = session.beginTransaction();
-        Email email = new Email();
-        System.out.println(email.getAttachments().size());
         email.setTitle(emailMap.get("title").toString());
         email.setPriority((int)emailMap.get("priority"));
         email.setContent(emailMap.get("content").toString());
@@ -54,6 +66,7 @@ public class UserSession {
         Date date=new Date();
         email.setDate(date);
         session.save(email);
+
         for(int i=0;i<attachmentPaths.length;i++){
             Attachment attachment=new Attachment();
             attachment.setEmail(email);
@@ -61,6 +74,16 @@ public class UserSession {
             email.getAttachments().add(attachment);
             session.save(attachment);
         }
+
+    }
+
+
+    public void sendEmail(Map<String, Object> emailMap, String[] receiver_address, String [] attachmentPaths){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        Email email = new Email();
+        setEmailContent(email,emailMap,attachmentPaths);
+        System.out.println(email.getAttachments().size());
 
         String idList="(";
         for (int i=0;i<receiver_address.length-1;i++){
@@ -76,18 +99,100 @@ public class UserSession {
         query.addEntity(User.class);
         List<User> receivers=query.list();
 
+        EmailHeader emailHeader = createEmailHeader(email);
+
         for (int i=0;i<receivers.size();i++){
-            EmailHeader emailHeader = new EmailHeader();
-            emailHeader.setTitle(email.getTitle());
-            emailHeader.setSender(currentUser);
-            emailHeader.setDate(email.getDate());
-            emailHeader.setPriority(email.getPriority());
             emailHeader.setFolder(receivers.get(i).getFolders().get(0));
             receivers.get(i).getFolders().get(0).getHeaders().add(emailHeader);
             session.save(receivers.get(i));
             session.save(emailHeader);
         }
+        emailHeader.setFolder(currentUser.getFolders().get(2));
+        currentUser.getFolders().get(1).getHeaders().add(emailHeader);
+
         trans.commit();
         session.close();
     }
+
+    public void draft(Map<String, Object> emailMap,String [] attachmentPaths){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        Email email = new Email();
+        setEmailContent(email,emailMap,attachmentPaths);
+        EmailHeader emailHeader = createEmailHeader(email);
+        emailHeader.setFolder(currentUser.getFolders().get(2));
+        currentUser.getFolders().get(2).getHeaders().add(emailHeader);
+        session.save(emailHeader);
+        trans.commit();
+        session.close();
+    }
+
+    public void moveEmail(int []headersId,int currentFolder,int destinationFolder){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+
+        List<EmailHeader> emailHeaders=getEmailHeader(headersId);
+        for (int i=0;i<emailHeaders.size();i++){
+            currentUser.getFolders().get(destinationFolder).getHeaders().add(emailHeaders.get(i));
+            currentUser.getFolders().get(currentFolder).getHeaders().remove(emailHeaders.get(i));
+            emailHeaders.get(i).setFolder(currentUser.getFolders().get(destinationFolder));
+            session.save(emailHeaders.get(i));
+
+        }
+
+        System.out.println(currentUser.getFolders().get(destinationFolder).getHeaders().size());
+        System.out.println(currentUser.getFolders().get(currentFolder).getHeaders().size());
+
+        trans.commit();
+        session.close();
+    }
+    public void copyEmail(int []headersId,int currentFolder,int destinationFolder){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+
+        List<EmailHeader> emailHeaders=getEmailHeader(headersId);
+        for (int i=0;i<emailHeaders.size();i++){
+            currentUser.getFolders().get(destinationFolder).getHeaders().add(emailHeaders.get(i));
+            emailHeaders.get(i).setFolder(currentUser.getFolders().get(destinationFolder));
+            session.save(emailHeaders.get(i));
+        }
+
+        System.out.println(currentUser.getFolders().get(destinationFolder).getHeaders().size());
+        System.out.println(currentUser.getFolders().get(currentFolder).getHeaders().size());
+
+        trans.commit();
+        session.close();
+    }
+
+    public void deleteEmail(int []headersId,int currentFolder){
+        moveEmail(headersId,currentFolder,3);
+    }
+
+    public List<EmailHeader> getEmailHeader(int[] headersId){
+        Session session = factory.openSession();
+        String idList="(";
+        for (int i=0;i<headersId.length-1;i++){
+            idList+="'"+headersId[i]+"'";
+            idList+=",";
+        }
+        idList+="'"+headersId[headersId.length-1]+"'";
+        idList+=")";
+        String sql = "SELECT * FROM EMAIL_HEADERS WHERE email_header_id IN ";
+        sql+=idList;
+        SQLQuery query = session.createSQLQuery(sql);
+        query.addEntity(EmailHeader.class);
+        List<EmailHeader> emailHeaders=query.list();
+        session.close();
+        return emailHeaders;
+    }
+
+    public void test(){
+        Session session = factory.openSession();
+        int x=currentUser.getFolders().get(1).getHeaders().size();
+        int y=currentUser.getFolders().get(2).getHeaders().size();
+        System.out.println(x);
+        System.out.println(y);
+        session.close();
+    }
+
 }
