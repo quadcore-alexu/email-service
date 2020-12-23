@@ -47,7 +47,7 @@
 </template>
 
 <script>
-
+import signInService from "@/service/signInService";
 
 export default {
   name: "SignIn",
@@ -65,19 +65,27 @@ export default {
   },
 
   methods: {
-    signIn() {
+    async signIn() {
       this.$refs.form.validate();
       if (this.validForm) {
-        if (this.password === "admin" /*check password*/) {
-          //send request and get user
-          this.$store.commit("setUser", { //set user
-            name: "Ahmad Waleed",
-            email: "a.waleedothman@quadcore.com",
-            key: "mockID"
+        const basicLoginInfo = await signInService.fetchLogin(this.email, this.password)
+        let isAuthenticatedUser = basicLoginInfo['authenticated']
+        if (isAuthenticatedUser == "true") {
+          this.$store.commit("setUser", {
+            name: basicLoginInfo['name'],
+            email: this.email,
+            key: basicLoginInfo['key'],
+            folderNames: basicLoginInfo['folder names']
+
           });
-          this.$router.push("/home"); //open home
-        } else this.valid = false;
-      }
+          console.log(basicLoginInfo['folder names'])
+          await this.$router.push("/home");
+        }
+        //console.log(this.email)
+        //console.log(this.password)
+
+
+      } else this.valid = false;
     },
 
     signUp() {
