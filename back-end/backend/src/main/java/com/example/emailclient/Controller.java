@@ -74,6 +74,50 @@ public class Controller {
         userSession.sendEmail(emailMap, receivers, paths);
         return "Succeeded";
     }
+    @RequestMapping(value = "/drafts",method = RequestMethod.POST)
+    public String drafts(@RequestPart(name ="attachments") MultipartFile[] attachments,
+                         @RequestParam(name ="email") String emailJson){
+        Map<String, Object> emailMap = null;
+        try {
+            emailMap = new ObjectMapper().readValue(emailJson, Map.class);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+
+        String[] paths = new String[attachments.length];
+        try {
+            int i = 0;
+            for (MultipartFile at: attachments) {
+                SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
+                String fileName = sdf.format(new Date()) + at.getOriginalFilename();
+                String path = FileSaver.saveFile(at, fileName);
+                if (path == null) {
+                    return null;
+                }
+                paths[i] = path;
+                i++;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        UserSession userSession = new UserSession(1);
+        userSession.draft(emailMap, paths);
+        return "Succeeded";
+    }
+
+
+    @RequestMapping(value = "/moveMail",method = RequestMethod.PUT)
+    public String moveMail(){
+        UserSession userSession = new UserSession(1);
+        //userSession.moveEmail();
+        return "Succeeded";
+    }
+
+    @RequestMapping(value = "/loadMailHeaders",method = RequestMethod.GET)
+    public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria){
+        UserSession userSession = new UserSession(1);
+        return userSession.loadEmailHeaders(folderIndex,page,criteria);
+    }
 
     @RequestMapping(value = "/dumpRetrieve", method = RequestMethod.GET)
     public List<EmailHeaderImmutable> dumpRetrieve() {

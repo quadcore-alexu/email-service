@@ -1,5 +1,6 @@
 package Models;
 
+import Models.Immutables.EmailHeaderImmutable;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -246,6 +247,29 @@ public class UserSession {
 
         }
         return folderNames;
+    }
+
+    public List<EmailHeaderImmutable> loadEmailHeaders(int folderIndex, int page, String sortingCriteria){
+        SortCriteria criteria=null;
+        int folderId= currentUser.getFolders().get(folderIndex).getFolderID();
+        if (sortingCriteria=="date")
+            criteria=new SortCriteriaDate(folderId,page);
+        else if(sortingCriteria=="priority")
+            criteria=new SortCriteriaPriority(folderId,page);
+        else if (sortingCriteria=="subject")
+            criteria=new SortCriteriaSubject(folderId,page);
+        List<EmailHeader>headers=criteria.sort();
+        List<EmailHeaderImmutable> immutableList=toImmutable(headers);
+        return immutableList;
+
+    }
+
+    public List<EmailHeaderImmutable> toImmutable(List<EmailHeader> list){
+        List<EmailHeaderImmutable> immutableList = new ArrayList<EmailHeaderImmutable>();
+        for (EmailHeader eh: list) {
+            immutableList.add(new EmailHeaderImmutable(eh));
+        }
+        return immutableList;
     }
 
     public User getCurrentUser() {
