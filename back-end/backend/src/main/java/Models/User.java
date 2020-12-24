@@ -7,10 +7,18 @@ import java.util.*;
 @Table(name = "users")
 public class User {
 
+
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userID;
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    @Column(name = "user_name", length = 128, nullable = false)
+    private String userName;
 
     @Column(name = "user_address", length = 128, nullable = false)
     private String address;
@@ -74,4 +82,8 @@ public class User {
     public void setContacts(List<Contact> contacts) {
         this.contacts = contacts;
     }
+    public String getUserName() {
+        return userName;
+    }
+
 }

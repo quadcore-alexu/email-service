@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @CrossOrigin
@@ -19,10 +20,16 @@ import java.util.Map;
 public class Controller {
 
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public String authenticate(@RequestHeader(value="Authorization") String userInfo){
-        return  SecurityFilter.getInstance().authenticateLogin(userInfo);
+    @RequestMapping(value = "/login", method = RequestMethod.POST,produces = "application/json")
+    public Map<String, Object> authenticate(@RequestHeader(value="Authorization") String userInfo){
+        String authenticatedUserID=SecurityFilter.getInstance().authenticateLogin(userInfo);
+        if(authenticatedUserID!="null")
+            return SecurityFilter.getInstance().generateBasicInfo(authenticatedUserID);
+        Map <String,Object> errorMap=new HashMap<>();
+        errorMap.put("authenticated","false");
+        return errorMap;
     }
+
 
     @RequestMapping(value = "/sendMail", method = RequestMethod.PUT)
     public String sendMail( @RequestPart(name ="attachments") MultipartFile[] attachments,
