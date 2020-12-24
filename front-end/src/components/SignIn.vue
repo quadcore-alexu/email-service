@@ -49,7 +49,8 @@
 <script>
 
 
-import signInservice from "@/service/signInservice";
+
+import signInService from "@/service/signInService";
 
 export default {
   name: "SignIn",
@@ -70,7 +71,7 @@ export default {
     async signIn() {
       this.$refs.form.validate();
       if (this.validForm) {
-        const basicLoginInfo = await signInservice.fetchLogin(this.email, this.password)
+        const basicLoginInfo = await signInService.fetchLogin(this.email, this.password)
         let isAuthenticatedUser = basicLoginInfo['authenticated']
         if (isAuthenticatedUser == "true") {
           this.$store.commit("setUser", {
