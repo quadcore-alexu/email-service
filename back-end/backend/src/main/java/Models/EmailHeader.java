@@ -1,8 +1,9 @@
 package Models;
 
+import Interfaces.IUserRO;
+
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "email_headers")
@@ -46,8 +47,8 @@ public class EmailHeader {
         this.title = title;
     }
 
-    public User getSender() {
-        return sender;
+    public IUserRO getSender() {
+        return (IUserRO) sender;
     }
 
     public void setSender(User sender) {

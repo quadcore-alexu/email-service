@@ -1,17 +1,20 @@
 package com.example.emailclient;
 
 import Misc.FileSaver;
-import Models.Email;
-import Models.SecurityFilter;
-import Models.UserSession;
+import Models.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin
@@ -63,9 +66,23 @@ public class Controller {
         return "Succeeded";
     }
 
-    @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    public String hello() {
-        return "Hello World";
+    @RequestMapping(value = "/dumpRetrieve", method = RequestMethod.GET)
+    public List<EmailHeaderImmutable> dumpRetrieve() {
+        SessionFactory factory = SecurityFilter.getInstance().getSessionFactory();
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        User user = session.find(User.class, 2);
+        List<EmailHeader> realList = user.getFolders().get(0).getHeaders();
+        trans.commit();
+        session.close();
+        List<EmailHeaderImmutable> dumpList = new ArrayList<EmailHeaderImmutable>();
+        for (EmailHeader eh: realList) {
+            dumpList.add(new EmailHeaderImmutable(eh));
+        }
+        for (EmailHeaderImmutable eh: dumpList) {
+            System.out.println(eh.getSenderAddress());
+        }
+        return dumpList;
     }
 
 }

@@ -166,18 +166,28 @@ export default {
           break
         case 2:
           this.currentComponent = MailList;
+          this.$store.commit("resetFolder");
+          this.$store.commit("setFolder", key);
           break
         case 3:
           this.currentComponent = MailList;
+          this.$store.commit("resetFolder");
+          this.$store.commit("setFolder", key);
           break
         case 4:
           this.currentComponent = MailList;
+          this.$store.commit("resetFolder");
+          this.$store.commit("setFolder", key);
           break
         case 5:
           this.currentComponent = MailList;
+          this.$store.commit("resetFolder");
+          this.$store.commit("setFolder", key);
           break
         case 6:
           this.currentComponent = MailList;
+          this.$store.commit("resetFolder");
+          this.$store.commit("setFolder", key);
           break
       }
     },

@@ -29,7 +29,7 @@ public class Folder {
     public void setFolderID(Integer folderID) {
         this.folderID = folderID;
     }
-
+ 
     public List<EmailHeader> getHeaders() {
         return headers;
     }
