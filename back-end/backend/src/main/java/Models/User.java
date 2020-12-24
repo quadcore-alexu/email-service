@@ -1,11 +1,13 @@
 package Models;
 
+import Interfaces.IUserRO;
+
 import javax.persistence.*;
 import java.util.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements IUserRO {
 
 
     @Id
@@ -13,11 +15,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userID;
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    @Column(name = "user_name", length = 128, nullable = false)
+    @Column(name = "user_name" , length = 128)
     private String userName;
 
     @Column(name = "user_address", length = 128, nullable = false)
@@ -41,6 +39,14 @@ public class User {
 
     public void setUserID(Integer userID) {
         this.userID = userID;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getAddress() {
@@ -82,8 +88,4 @@ public class User {
     public void setContacts(List<Contact> contacts) {
         this.contacts = contacts;
     }
-    public String getUserName() {
-        return userName;
-    }
-
 }

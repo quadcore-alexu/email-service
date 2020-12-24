@@ -1,8 +1,9 @@
 package Models;
 
+import Interfaces.IUserRO;
+
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "email_headers")
@@ -15,6 +16,10 @@ public class EmailHeader {
 
     @Column(name = "email_title")
     private String title;
+
+    @ManyToOne
+    @JoinColumn(name="email_id", nullable = false)
+    private Email email;
 
     @ManyToOne
     @JoinColumn(name="sender_id", nullable = false)
@@ -46,8 +51,16 @@ public class EmailHeader {
         this.title = title;
     }
 
-    public User getSender() {
-        return sender;
+    public Email getEmail() {
+        return email;
+    }
+
+    public void setEmail(Email email) {
+        this.email = email;
+    }
+
+    public IUserRO getSender() {
+        return (IUserRO) sender;
     }
 
     public void setSender(User sender) {

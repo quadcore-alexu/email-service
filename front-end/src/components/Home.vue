@@ -105,6 +105,7 @@ import MailView from "./MailView";
 import MyMask from "./MyMask";
 import Contacts from "./Contacts";
 import Folders from "./Folders";
+import EmailService from "../service/EmailService";
 
 export default {
   name: "Home",
@@ -166,18 +167,28 @@ export default {
           break
         case 2:
           this.currentComponent = MailList;
+          this.$store.commit("resetFolder");
+          this.$store.commit("setFolder", key);
           break
         case 3:
           this.currentComponent = MailList;
+          this.$store.commit("resetFolder");
+          this.$store.commit("setFolder", key);
           break
         case 4:
           this.currentComponent = MailList;
+          this.$store.commit("resetFolder");
+          this.$store.commit("setFolder", key);
           break
         case 5:
           this.currentComponent = MailList;
+          this.$store.commit("resetFolder");
+          this.$store.commit("setFolder", key);
           break
         case 6:
           this.currentComponent = MailList;
+          this.$store.commit("resetFolder");
+          this.$store.commit("setFolder", key);
           break
       }
     },
@@ -200,8 +211,12 @@ export default {
       this.maskComponentName = null;
     });
 
-    this.$root.$on("openMail", (mail) => {
-      this.openedMail = mail;
+    this.$root.$on("openMail", (mailID) => {
+      console.log("We need to fetch mail: ", mailID);
+      EmailService.getMail(mailID).then( Response => {
+        console.log(Response.data);
+      });
+      //this.openedMail = mail;
       this.currentComponent = MailView;
     });
   },

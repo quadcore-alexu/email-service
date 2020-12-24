@@ -4,6 +4,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +44,7 @@ public class UserSession {
     public EmailHeader createEmailHeader(Email email){
         EmailHeader emailHeader = new EmailHeader();
         emailHeader.setTitle(email.getTitle());
+        emailHeader.setEmail(email);
         emailHeader.setSender(currentUser);
         emailHeader.setDate(email.getDate());
         emailHeader.setPriority(email.getPriority());
@@ -74,8 +76,6 @@ public class UserSession {
         Transaction trans = session.beginTransaction();
         Email email = new Email();
         setEmailContent(email,emailMap,attachmentPaths);
-        System.out.println(email.getAttachments().size());
-
         String idList="(";
         for (int i=0;i<receiver_address.length-1;i++){
             idList+="'"+receiver_address[i]+"'";
@@ -90,17 +90,17 @@ public class UserSession {
         query.addEntity(User.class);
         List<User> receivers=query.list();
 
-        EmailHeader emailHeader = createEmailHeader(email);
-
         for (int i=0;i<receivers.size();i++){
+            EmailHeader emailHeader = createEmailHeader(email);
             emailHeader.setFolder(receivers.get(i).getFolders().get(0));
             receivers.get(i).getFolders().get(0).getHeaders().add(emailHeader);
             session.save(receivers.get(i));
             session.save(emailHeader);
         }
+        EmailHeader emailHeader = createEmailHeader(email);
         emailHeader.setFolder(currentUser.getFolders().get(2));
-        currentUser.getFolders().get(1).getHeaders().add(emailHeader);
-
+        currentUser.getFolders().get(2).getHeaders().add(emailHeader);
+        session.save(emailHeader);
         trans.commit();
         session.close();
     }
@@ -111,6 +111,7 @@ public class UserSession {
         Email email = new Email();
         setEmailContent(email,emailMap,attachmentPaths);
         EmailHeader emailHeader = createEmailHeader(email);
+        emailHeader.setEmail(email);
         emailHeader.setFolder(currentUser.getFolders().get(2));
         currentUser.getFolders().get(2).getHeaders().add(emailHeader);
         session.save(emailHeader);
@@ -214,20 +215,25 @@ public class UserSession {
     }
 
     public List<EmailHeader> paging(int pageNumber){
+        System.out.println("####################################################################");
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         org.hibernate.Criteria cr = session.createCriteria(EmailHeader.class);
         int n=(pageNumber*6)-6;
-        cr.setFirstResult(n);
+        cr.setFirstResult(7);
         cr.setMaxResults(6);
-        List<EmailHeader> emailHeaders  = cr.list();
+        cr.createAlias("folder", "currentFolder")
+                .add(Restrictions.eq("currentFolder.folderID", 2));
 
-        for (int i=0;i<emailHeaders.size();i++)
+        List<EmailHeader> emailHeaders  = cr.list();
+        for (int i=0;i<emailHeaders.size();i++) {
+            System.out.println("####################################################################");
             System.out.println(emailHeaders.get(i).getEmailHeaderID());
+            System.out.println("####################################################################");
+        }
 
         trans.commit();
         session.close();
-
         return emailHeaders;
     }
 

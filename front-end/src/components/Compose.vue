@@ -93,7 +93,7 @@
 
 <script>
 import Email from "../models/Email";
-import axios from "axios";
+import EmailService from "../service/EmailService";
 
 export default {
   name: "Compose",
@@ -144,7 +144,6 @@ export default {
       this.receivers.splice(index, 1);
     },
     send() {
-      console.log("Hello");
       if (this.receivers.length == 0) {
         alert("Please type receiver address followed by space")
         return
@@ -159,17 +158,13 @@ export default {
       formData.append("email", JSON.stringify(email));
       formData.append("receivers", receiverStr);
       this.files.forEach(element => formData.append("attachments", element));
-      axios.put("http://localhost:8080/api/sendMail", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
+      EmailService.sendMail(formData)
+      .then(() => {
+        console.log("Succeeded");
       })
-          .then(() => {
-            console.log("Succeeded");
-          })
-          .catch(error => {
-            console.log(error);
-          });
+      .catch(error => {
+        console.log(error);
+      });
     }
   },
   directives: {
