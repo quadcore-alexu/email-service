@@ -88,8 +88,6 @@ public class User implements IUserRO {
     public void setContacts(List<Contact> contacts) {
         this.contacts = contacts;
     }
-    public String getUserName() {
-        return userName;
-    }
+
 
 }
