@@ -1,6 +1,19 @@
 import axios from "axios";
 const API_URL = "http://localhost:8080/api/";
 class EmailService {
+
+  /**
+   * @param emailID to be fetched
+   * @returns success flag
+   */
+  getMail(emailID) {
+    return axios.get(API_URL + "getMail", {
+          params:{
+            id: emailID
+          }
+        });
+  }
+
   /**
    * @param formdata to be sent
    * @returns success flag

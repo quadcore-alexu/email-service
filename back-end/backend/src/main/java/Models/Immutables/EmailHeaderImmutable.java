@@ -1,4 +1,6 @@
-package Models;
+package Models.Immutables;
+
+import Models.EmailHeader;
 
 import java.util.Date;
 
@@ -6,6 +8,7 @@ public class EmailHeaderImmutable {
 
     private Integer emailHeaderID;
     private String title;
+    private Integer emailID;
     private String senderAddress;
     private String senderName;
     private java.util.Date date;
@@ -14,6 +17,7 @@ public class EmailHeaderImmutable {
     public EmailHeaderImmutable(EmailHeader emailHeader) {
         this.emailHeaderID = emailHeader.getEmailHeaderID();
         this.title = emailHeader.getTitle();
+        this.emailID = emailHeader.getEmail().getEmailID();
         this.senderAddress = emailHeader.getSender().getAddress();
         this.senderName = emailHeader.getSender().getUserName();
         this.date = emailHeader.getDate();
@@ -26,6 +30,10 @@ public class EmailHeaderImmutable {
 
     public String getTitle() {
         return title;
+    }
+
+    public Integer getEmailID() {
+        return emailID;
     }
 
     public String getSenderAddress() {

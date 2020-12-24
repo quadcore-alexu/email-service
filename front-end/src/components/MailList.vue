@@ -76,7 +76,7 @@
 
                 <v-list-item-action>
                   <v-list-item-action-text v-text="emailHeader.date"></v-list-item-action-text>
-                  <span @click="showMail(emailHeader.emailHeaderID)"><v-icon>mdi-eye</v-icon></span>
+                  <span @click="showMail(emailHeader.emailID)"><v-icon>mdi-eye</v-icon></span>
                 </v-list-item-action>
               </template>
             </v-list-item>
@@ -85,8 +85,16 @@
         </v-list-item-group>
       </v-list>
     </v-card>
-    <div class="py-0 py-2 px-4">
+    <div class="py-0 py-2 px-4" style="bottom: 0;">
       <v-row>
+        <v-col>
+          <v-btn v-if="page > 1" color="accent" @click="page-=1">
+              <v-icon left>
+                mdi-page-previous
+              </v-icon>
+              Previous
+            </v-btn>
+        </v-col>
         <v-col>
           <v-btn @click="openFolderSelection('move')" block color="accent">
             <v-icon left>
@@ -111,26 +119,24 @@
             Delete
           </v-btn>
         </v-col>
-      </v-row>
-      <v-row>
-        <v-card-actions style="  position: absolute; bottom: 0; left:0;">
-          <v-container>
-            <v-btn v-if="page > 1" color="accent" @click="page-=1">
-              <v-icon left>
-                mdi-page-previous
-              </v-icon>
-              Previous
-            </v-btn>
-          </v-container>
-        </v-card-actions>
-        <v-card-actions style="  position: absolute; bottom: 0; right:0;">
-        <v-container>
-          <v-btn v-if="emailHeaders != null && emailHeaders.length == 6" color="accent" @click="page+=1">
+        <v-col>
+          <v-btn v-if="emailHeaders != null && emailHeaders.length >= 6" color="accent" @click="page+=1">
             Next
             <v-icon right>
               mdi-page-next
             </v-icon>
           </v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-card-actions style="  position: absolute; bottom: 0; left:0;">
+          <v-container>
+            
+          </v-container>
+        </v-card-actions>
+        <v-card-actions >
+        <v-container>
+          
         </v-container>
       </v-card-actions>
       </v-row>
@@ -181,7 +187,7 @@ export default {
       },
       showMail(id) {
         console.log("Mail ID", id);
-        console.log("Current Folder", this.$store.getters.getFolder);
+        this.$root.$emit("openMail", id);
       },
       showSelected() {
         this.selected.forEach(num=>console.log(this.emailHeaders[num]));

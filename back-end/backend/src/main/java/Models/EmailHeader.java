@@ -18,6 +18,10 @@ public class EmailHeader {
     private String title;
 
     @ManyToOne
+    @JoinColumn(name="email_id", nullable = false)
+    private Email email;
+
+    @ManyToOne
     @JoinColumn(name="sender_id", nullable = false)
     private User sender;
 
@@ -45,6 +49,14 @@ public class EmailHeader {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Email getEmail() {
+        return email;
+    }
+
+    public void setEmail(Email email) {
+        this.email = email;
     }
 
     public IUserRO getSender() {

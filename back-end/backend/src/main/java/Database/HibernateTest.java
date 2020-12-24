@@ -52,10 +52,11 @@ public class HibernateTest {
         // retrieve user from the data base
         //User retrievedUser = session.find(User.class, 1);*/
         UserSession s=new UserSession(1);
-        s.getUserFromDataBase();
+        s.paging(1);
+        //s.getUserFromDataBase();
         //s.showFolder();
         // it comes with his folders and mails
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        //System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         //System.out.println(retrievedUser.getFolders().get(0).getHeaders().get(0).getTitle());
         /*String sql = "SELECT * FROM USERS WHERE user_address = :user_address AND user_password= :user_password";
         SQLQuery query = session.createSQLQuery(sql);

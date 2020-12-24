@@ -105,6 +105,7 @@ import MailView from "./MailView";
 import MyMask from "./MyMask";
 import Contacts from "./Contacts";
 import Folders from "./Folders";
+import EmailService from "../service/EmailService";
 
 export default {
   name: "Home",
@@ -210,8 +211,12 @@ export default {
       this.maskComponentName = null;
     });
 
-    this.$root.$on("openMail", (mail) => {
-      this.openedMail = mail;
+    this.$root.$on("openMail", (mailID) => {
+      console.log("We need to fetch mail: ", mailID);
+      EmailService.getMail(mailID).then( Response => {
+        console.log(Response.data);
+      });
+      //this.openedMail = mail;
       this.currentComponent = MailView;
     });
   },

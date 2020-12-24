@@ -17,8 +17,8 @@ public class Contact {
     @JoinColumn(name="owner_id", nullable = false)
     private User owner;
 
-    @OneToMany(mappedBy = "ownerContact")
-    private List<Address> addresses = new ArrayList<Address>();
+    @Column(name = "addresses")
+    private String addresses;
 
     public Integer getContactID() {
         return contactID;
@@ -36,11 +36,11 @@ public class Contact {
         this.owner = owner;
     }
 
-    public List<Address> getAddresses() {
+    public String getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(List<Address> addresses) {
+    public void setAddresses(String addresses) {
         this.addresses = addresses;
     }
 }

@@ -2,6 +2,8 @@ package com.example.emailclient;
 
 import Misc.FileSaver;
 import Models.*;
+import Models.Immutables.EmailHeaderImmutable;
+import Models.Immutables.EmailImmutable;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
@@ -33,6 +35,13 @@ public class Controller {
         return errorMap;
     }
 
+    @RequestMapping(value = "/getMail", method = RequestMethod.GET)
+    public EmailImmutable getMail(int id) {
+        UserSession userSession = new UserSession(1);
+        EmailImmutable emI = new EmailImmutable(userSession.getMail(id));
+        System.out.println("DDDDDDDDDDDDDDDDDDDDDDDD" + emI.getTitle());
+        return emI;
+    }
 
     @RequestMapping(value = "/sendMail", method = RequestMethod.PUT)
     public String sendMail( @RequestPart(name ="attachments") MultipartFile[] attachments,
