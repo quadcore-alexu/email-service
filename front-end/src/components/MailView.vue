@@ -1,7 +1,7 @@
 <template>
   <div class="fill-height">
     <v-card-title>
-      {{ mail.title }}
+      {{ mail.title|showSubject }}
     </v-card-title>
     <v-card-subtitle style="text-align: left">
       From: {{ mail.senderName }} &lt; {{ mail.senderAddress }} &gt; <br/>
@@ -63,6 +63,11 @@ export default {
         case 4:
           return "Crucial"
       }
+    },
+
+    showSubject(subject) {
+      if (subject !== '') return subject
+      else return 'No Subject'
     }
   },
 
