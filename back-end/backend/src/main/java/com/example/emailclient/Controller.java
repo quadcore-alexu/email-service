@@ -35,7 +35,7 @@ public class Controller {
         return errorMap;
     }
 
-    @RequestMapping(value = "/getMail", method = RequestMethod.GET)
+    @RequestMapping(value = "/getMail", method = RequestMethod.GET, produces = "application/json")
     public EmailImmutable getMail(int id) {
         UserSession userSession = new UserSession(1);
         EmailImmutable emI = new EmailImmutable(userSession.getMail(id));

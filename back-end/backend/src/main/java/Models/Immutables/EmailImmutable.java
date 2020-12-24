@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class EmailImmutable {
 
@@ -20,7 +18,7 @@ public class EmailImmutable {
     private String senderName;
     private String content;
     private java.util.Date date;
-    private List<byte[]> attachments = new ArrayList<byte[]>();
+    private List<Map<String, Object>> attachments = new ArrayList<Map<String, Object>>();
     private Integer priority;
 
     public EmailImmutable(Email email) {
@@ -31,12 +29,14 @@ public class EmailImmutable {
         this.content = email.getContent();
         this.date = email.getDate();
         this.priority = email.getPriority();
+
         List<Attachment> attachList = email.getAttachments();
         for (Attachment attachment: attachList) {
+            Map<String, Object> attachmentPackage = new HashMap<String, Object>();
             try {
-                System.out.println("###############################");
-                System.out.println(attachment.getPath());
-                this.attachments.add(Files.readAllBytes(Paths.get(attachment.getPath())));
+                attachmentPackage.put("fileName", attachment.getPath().substring(43));
+                attachmentPackage.put("content", Files.readAllBytes(Paths.get(attachment.getPath())));
+                this.attachments.add(attachmentPackage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -67,7 +67,7 @@ public class EmailImmutable {
         return date;
     }
 
-    public List<byte[]> getAttachments() {
+    public List<Map<String, Object>> getAttachments() {
         return attachments;
     }
 
