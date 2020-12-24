@@ -8,8 +8,8 @@ import org.hibernate.criterion.Restrictions;
 import java.util.List;
 
 public class SortCriteriaSubject extends SortCriteria {
-    public SortCriteriaSubject(Integer userFolderID, Integer page) {
-        super(userFolderID, page);
+    public SortCriteriaSubject(Integer userFolderID, Integer page,boolean order) {
+        super(userFolderID, page,order);
     }
 
     @Override
@@ -18,8 +18,12 @@ public class SortCriteriaSubject extends SortCriteria {
         Transaction trans = session.beginTransaction();
         org.hibernate.Criteria sortCriteriaSubject = session.createCriteria(EmailHeader.class)
                 .createAlias("folder", "currentFolder")
-                .add(Restrictions.eq("currentFolder.folderID", userFolderID))
-                .addOrder(Order.asc("title"));
+                .add(Restrictions.eq("currentFolder.folderID", userFolderID));
+
+        if(order)
+            sortCriteriaSubject.addOrder(Order.asc("title"));
+        else
+            sortCriteriaSubject.addOrder(Order.desc("title"));
         int startIndex = (page * 6) - 6;
         List<EmailHeader> sortedList = sortCriteriaSubject.setFirstResult(startIndex).setMaxResults(6).list();
         trans.commit();

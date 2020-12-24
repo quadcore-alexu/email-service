@@ -140,9 +140,9 @@ public class Controller {
 
 
     @RequestMapping(value = "/loadMailHeaders",method = RequestMethod.GET)
-    public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria){
+    public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria,Boolean order){
         UserSession userSession = new UserSession(1);
-        return userSession.loadEmailHeaders(folderIndex,page,criteria);
+        return userSession.loadEmailHeaders(folderIndex,page,criteria,order);
     }
 
     @RequestMapping(value = "/dumpRetrieve", method = RequestMethod.GET)

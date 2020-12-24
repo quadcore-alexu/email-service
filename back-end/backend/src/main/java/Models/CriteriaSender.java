@@ -8,8 +8,8 @@ import java.util.List;
 
 public class CriteriaSender extends Criteria {
 
-    public CriteriaSender(Integer userFolderID) {
-        super(userFolderID);
+    public CriteriaSender(Integer userFolderID,Integer page) {
+        super(userFolderID,page);
     }
 
     @Override
@@ -19,10 +19,12 @@ public class CriteriaSender extends Criteria {
         Transaction trans = session.beginTransaction();
         org.hibernate.Criteria senderCriteria = session.createCriteria(EmailHeader.class);
         senderCriteria.createAlias("sender", "currentSender")
-                .add(Restrictions.eq("currentSender.userID", Integer.parseInt(sender)));
+                .add(Restrictions.eq("currentSender.userName", sender));
         senderCriteria.createAlias("folder", "currentFolder")
                 .add(Restrictions.eq("currentFolder.folderID", userFolderID));
-        List<EmailHeader> filteredMailHeaders = senderCriteria.list();
+        int startIndex=(page*6)-6;
+        List<EmailHeader> filteredMailHeaders = senderCriteria.setFirstResult(startIndex).setMaxResults(6).list();
+
         trans.commit();
         session.close();
         return filteredMailHeaders;

@@ -9,8 +9,8 @@ import java.util.List;
 public class CriteriaSubject extends Criteria {
 
 
-    public CriteriaSubject(Integer userFolderID) {
-        super(userFolderID);
+    public CriteriaSubject(Integer userFolderID,Integer page) {
+        super(userFolderID,page);
     }
 
 
@@ -23,7 +23,9 @@ public class CriteriaSubject extends Criteria {
         subjectCriteria.add(Restrictions.eq("title", subject));
         subjectCriteria.createAlias("folder", "currentFolder")
                 .add(Restrictions.eq("currentFolder.folderID", userFolderID));
-        List<EmailHeader> filteredMailHeaders = subjectCriteria.list();
+        int startIndex=(page*6)-6;
+        List<EmailHeader> filteredMailHeaders = subjectCriteria.setFirstResult(startIndex).setMaxResults(6).list();
+
         trans.commit();
         session.close();
         return filteredMailHeaders;

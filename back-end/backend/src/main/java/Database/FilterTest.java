@@ -21,49 +21,92 @@ public class FilterTest {
     public void testSubjectFilter()
     {
         //addToDB();
-        Criteria subjectFilter=new CriteriaSubject(35);
-        List<EmailHeader> result=subjectFilter.meetCriteria("meow0Mail");
+        Criteria subjectFilter=new CriteriaSubject(141,1);
+        List<EmailHeader> result=subjectFilter.meetCriteria("hello");
         Assert.assertEquals(1,result.size());
-        Assert.assertEquals("meow0Mail",result.get(0).getTitle());
+        Assert.assertEquals("hello",result.get(0).getTitle());
 
     }
      @Test
     public void testSenderFilter()
     {
-        Criteria senderFilter=new CriteriaSender(35);
-        List<EmailHeader> result=senderFilter.meetCriteria("35");
+        Criteria senderFilter=new CriteriaSender(139,1);
+        List<EmailHeader> result=senderFilter.meetCriteria("meen");
         Assert.assertEquals(1,result.size());
-        int id=result.get(0).getSender().getUserID();
-        Assert.assertEquals(35,id);
+        String id=result.get(0).getSender().getUserName();
+        Assert.assertEquals("meen",id);
 
     }
-    public void addToDB()
-    {
+    @Test
+    public void addToDB() throws ParseException {
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure().build();
         SessionFactory factory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
         Session session = factory.openSession();
         Transaction trans  = session.beginTransaction();
+
+        User user2 = new User();
+        user2.setAddress("test2@g.com");
+        try {
+            user2.setDOB(new SimpleDateFormat("dd/MM/yyyy").parse("14/11/1999"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        user2.setPassword("test");
+        user2.setUserName("marioum");
+        session.save(user2);
+
+
+        User user3 = new User();
+        user3.setAddress("test3@g.com");
+        try {
+            user3.setDOB(new SimpleDateFormat("dd/MM/yyyy").parse("14/11/1999"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        user3.setPassword("test");
+        user3.setUserName("semsem");
+        session.save(user3);
+
         User user = new User();
-        user.setAddress("meow123@gmail.com");
+        user.setAddress("testdate@g.com");
         try {
             user.setDOB(new SimpleDateFormat("dd/MM/yyyy").parse("14/11/1999"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        user.setPassword("hiiii");
+        user.setPassword("test");
+        user.setUserName("testSortSender");
         session.save(user);
         Folder f = new Folder();
         f.setOwner(user);
         user.getFolders().add(f);
         session.save(f);
+        Email m=new Email();
+        m.setSender(user);
+        session.save(m);
         EmailHeader emh = new EmailHeader();
-        emh.setSender(user);
+        emh.setSender(user2);
+        emh.setEmail(m);
         emh.setPriority(5);
+        emh.setTitle("test");
+        emh.setDate(new SimpleDateFormat("dd/MM/yyyy").parse("24/12/2020"));
         emh.setFolder(f);
         f.getHeaders().add(emh);
-        emh.setTitle("meow0Mail");
         session.save(emh);
+
+        EmailHeader emh2 = new EmailHeader();
+        emh2.setSender(user3);
+        emh2.setEmail(m);
+        emh2.setPriority(5);
+        emh2.setDate(new SimpleDateFormat("dd/MM/yyyy").parse("24/12/2020"));
+        emh2.setTitle("aaa");
+
+        emh2.setFolder(f);
+        f.getHeaders().add(emh2);
+        session.save(emh2);
+
+
         trans.commit();
         session.close();
         factory.close();

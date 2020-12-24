@@ -8,8 +8,8 @@ import java.util.List;
 public class SortCriteriaPriority extends SortCriteria{
 
 
-    public SortCriteriaPriority(Integer userFolderID, Integer page) {
-        super(userFolderID, page);
+    public SortCriteriaPriority(Integer userFolderID, Integer page,boolean order) {
+        super(userFolderID, page,order);
     }
 
     @Override
@@ -18,8 +18,12 @@ public class SortCriteriaPriority extends SortCriteria{
         Transaction trans = session.beginTransaction();
         org.hibernate.Criteria sortCriteriaPriority= session.createCriteria(EmailHeader.class)
                 .createAlias("folder", "currentFolder")
-                .add(Restrictions.eq("currentFolder.folderID", userFolderID))
-                .addOrder(Order.asc("priority"));
+                .add(Restrictions.eq("currentFolder.folderID", userFolderID));
+
+        if(order)
+            sortCriteriaPriority.addOrder(Order.asc("priority"));
+        else
+            sortCriteriaPriority.addOrder(Order.desc("priority"));
         int startIndex=(page*6)-6;
         List<EmailHeader> sortedList=sortCriteriaPriority.setFirstResult(startIndex).setMaxResults(6).list();
         trans.commit();

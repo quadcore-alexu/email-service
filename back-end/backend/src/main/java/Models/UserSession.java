@@ -248,15 +248,15 @@ public class UserSession {
         return folderNames;
     }
 
-    public List<EmailHeaderImmutable> loadEmailHeaders(int folderIndex, int page, String sortingCriteria){
+    public List<EmailHeaderImmutable> loadEmailHeaders(int folderIndex, int page, String sortingCriteria,Boolean order){
         SortCriteria criteria=null;
         int folderId= currentUser.getFolders().get(folderIndex).getFolderID();
         if (sortingCriteria=="date")
-            criteria=new SortCriteriaDate(folderId,page);
+            criteria=new SortCriteriaDate(folderId,page,order);
         else if(sortingCriteria=="priority")
-            criteria=new SortCriteriaPriority(folderId,page);
+            criteria=new SortCriteriaPriority(folderId,page,order);
         else if (sortingCriteria=="subject")
-            criteria=new SortCriteriaSubject(folderId,page);
+            criteria=new SortCriteriaSubject(folderId,page,order);
         List<EmailHeader>headers=criteria.sort();
         List<EmailHeaderImmutable> immutableList=toImmutable(headers);
         return immutableList;
