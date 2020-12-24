@@ -6,7 +6,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -179,7 +178,7 @@ public class UserSession {
         return emailHeaders;
     }
 
-    public void addFolder(Map<String, Object> folderMap){
+    public void addFolder(Map<String,Object> folderMap){
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         Folder folder = new Folder();
@@ -220,7 +219,7 @@ public class UserSession {
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         org.hibernate.Criteria cr = session.createCriteria(EmailHeader.class);
-        int n=(pageNumber*6)-6;
+        int n=6*(pageNumber-1);
         cr.setFirstResult(7);
         cr.setMaxResults(6);
         cr.createAlias("folder", "currentFolder")

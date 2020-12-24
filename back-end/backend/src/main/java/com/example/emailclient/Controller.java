@@ -107,11 +107,37 @@ public class Controller {
 
 
     @RequestMapping(value = "/moveMail",method = RequestMethod.PUT)
-    public String moveMail(){
+    public void moveMail(int []headersId,int currentFolder,int destinationFolder){
         UserSession userSession = new UserSession(1);
-        //userSession.moveEmail();
-        return "Succeeded";
+        userSession.moveEmail(headersId,currentFolder,destinationFolder);
     }
+    @RequestMapping(value = "/copyMail",method = RequestMethod.PUT)
+    public void copyMail(int []headersId,int currentFolder,int destinationFolder){
+        UserSession userSession = new UserSession(1);
+        userSession.copyEmail(headersId,currentFolder,destinationFolder);
+    }
+    @RequestMapping(value = "/deleteMail",method = RequestMethod.DELETE)
+    public void deleteMail(int []headersId,int currentFolder){
+        UserSession userSession = new UserSession(1);
+        userSession.deleteEmail(headersId,currentFolder);
+    }
+    @RequestMapping(value = "/addFolder",method = RequestMethod.POST)
+    public void addFolder(Map<String,Object> folderMap){
+        UserSession userSession = new UserSession(1);
+        userSession.addFolder(folderMap);
+    }
+
+    @RequestMapping(value = "/deleteFolder",method = RequestMethod.DELETE)
+    public void deleteFolder(int folderId){
+        UserSession userSession = new UserSession(1);
+        userSession.removeFolder(folderId);
+    }
+    @RequestMapping(value = "/editFolder",method = RequestMethod.PUT)
+    public void editFolder(Map<String,Object> folderMap){
+        UserSession userSession = new UserSession(1);
+        userSession.editFolder(folderMap);
+    }
+
 
     @RequestMapping(value = "/loadMailHeaders",method = RequestMethod.GET)
     public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria){
