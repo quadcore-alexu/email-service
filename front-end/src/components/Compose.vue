@@ -160,7 +160,8 @@ export default {
       this.files.forEach(element => formData.append("attachments", element));
       EmailService.sendMail(formData)
       .then(() => {
-        console.log("Succeeded");
+        alert("Mail Sent")
+        this.$root.$emit("navigate", 2)
       })
       .catch(error => {
         console.log(error);

@@ -76,7 +76,9 @@
 
                 <v-list-item-action>
                   <v-list-item-action-text v-text="emailHeader.date"></v-list-item-action-text>
-                  <span @click="showMail(emailHeader.emailID)"><v-icon>mdi-eye</v-icon></span>
+                  <v-btn color="accent" depressed outlined
+                         rounded @click="showMail(emailHeader.emailID)">Preview
+                  </v-btn>
                 </v-list-item-action>
               </template>
             </v-list-item>
