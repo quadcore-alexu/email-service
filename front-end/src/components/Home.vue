@@ -214,7 +214,6 @@ export default {
     this.$root.$on("openMail", (mailID) => {
       //console.log("We need to fetch mail: ", mailID);
       EmailService.getMail(mailID).then(Response => {
-        console.log(Response.data);
         this.openedMail = Response.data;
         this.currentComponent = MailView;
       });

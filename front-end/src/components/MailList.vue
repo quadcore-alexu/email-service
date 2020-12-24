@@ -82,7 +82,7 @@
                 </v-list-item-action>
               </template>
             </v-list-item>
-            
+
           </template>
         </v-list-item-group>
       </v-list>
@@ -133,12 +133,12 @@
       <v-row>
         <v-card-actions style="  position: absolute; bottom: 0; left:0;">
           <v-container>
-            
+
           </v-container>
         </v-card-actions>
         <v-card-actions >
         <v-container>
-          
+
         </v-container>
       </v-card-actions>
       </v-row>

@@ -35,6 +35,7 @@ export default {
   data() {
     return {
       name: this.folder.name,
+      id: this.folder.id,
       validForm: false,
       requiredRules: value => !!value || 'Required',
     }
