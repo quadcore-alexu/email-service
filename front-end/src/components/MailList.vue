@@ -291,7 +291,8 @@ export default {
         if(this.filterDialog && this.selectedFilter == "Date") {
           this.searchKey = this.fileringDate;
         }
-        EmailService.getFilteredMailHeaders(this.$store.getters.getFolder-2, this.page, this.selectedFilter, this.searchKey)
+        let user=this.$store.getters.getUser
+        EmailService.getFilteredMailHeaders(this.$store.getters.getFolder-2, this.page, this.selectedFilter, this.searchKey,user.key)
         .then(response => {
           this.emailHeaders = response.data;
           console.log(response.data);

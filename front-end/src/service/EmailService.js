@@ -51,7 +51,7 @@ class EmailService {
    * @param filteringCriteria to filter by
    * @returns response with email headers
    */
-  getFilteredMailHeaders(folderIndex, page, filteringCriteria, filteringKey) {
+  getFilteredMailHeaders(folderIndex, page, filteringCriteria, filteringKey,key) {
     if (filteringCriteria == 'Date') {
       filteringKey = filteringKey.split("-").reverse().join("/")
     }
@@ -60,7 +60,8 @@ class EmailService {
           folderIndex: folderIndex,
           page: page,
           criteria: filteringCriteria,
-          filterKey: filteringKey
+          filterKey: filteringKey,
+            key: key
         }
     });
   }

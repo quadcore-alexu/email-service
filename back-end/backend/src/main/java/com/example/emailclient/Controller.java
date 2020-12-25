@@ -210,9 +210,12 @@ public class Controller {
     }
 
     @RequestMapping(value = "/filterMailHeaders",method = RequestMethod.GET)
-    public List<EmailHeaderImmutable> filterMailHeaders(int folderIndex,int page,String criteria,String filterKey){
-        UserSession userSession = new UserSession(1);
-        return userSession.filterEmailHeaders(folderIndex,page,criteria,filterKey);
+    public List<EmailHeaderImmutable> filterMailHeaders(int folderIndex,int page,String criteria,String filterKey,String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null) {
+            return userSession.filterEmailHeaders(folderIndex, page, criteria, filterKey);
+        }
+        return null;
     }
 
     @RequestMapping(value = "/loadContacts",method = RequestMethod.GET)
