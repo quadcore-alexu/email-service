@@ -69,7 +69,7 @@ export default {
         } else {
           map = {name: this.name, id: this.id}
           FolderService.editFolder(map)
-          this.$store.commit("editFolder", this.id, this.name);
+          this.$store.commit("editFolder", {id: this.id + 4, name: this.name});
         }
         this.$root.$emit("refreshFolders")
         this.back();
@@ -78,8 +78,9 @@ export default {
 
     del() {
       FolderService.deleteFolder(this.id)
-      this.$store.commit("delFolder", this.id);
-      this.$root.$emit("refreshFolders")
+      this.$store.commit("delFolder", this.id + 4);
+      this.$root.$emit("refreshFolders");
+      this.back();
     }
   }
 }
