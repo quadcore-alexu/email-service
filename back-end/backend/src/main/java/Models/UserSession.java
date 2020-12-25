@@ -194,7 +194,7 @@ public class UserSession {
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         Folder folder = session.find(Folder.class, currentUser.getFolders().get((int)folderMap.get("id")).getFolderID());
-        folder.setOwner(currentUser);
+        //folder.setOwner(currentUser);
         folder.setFolderName(folderMap.get("name").toString());
         session.save(folder);
         trans.commit();
@@ -206,9 +206,10 @@ public class UserSession {
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         Folder folder = session.find(Folder.class,currentUser.getFolders().get(folderID).getFolderID());
-        folder.setOwner(currentUser);
+        session.remove(folder);
+        //folder.setOwner(currentUser);
         currentUser.getFolders().remove(folder);
-        session.save(currentUser);
+        //session.save(currentUser);
         trans.commit();
         session.close();
     }
@@ -241,9 +242,9 @@ public class UserSession {
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         Contact contact = session.find(Contact.class, contactID);
-        contact.setOwner(currentUser);
+        //contact.setOwner(currentUser);
         currentUser.getContacts().remove(contact);
-        session.save(currentUser);
+        session.remove(contact);
         trans.commit();
         session.close();
     }
@@ -293,11 +294,19 @@ public class UserSession {
     }
 
     public List<ContactImmutable> loadContacts(){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        User s=session.find(User.class,currentUser.getUserID());
         List<ContactImmutable> immutableList = new ArrayList<ContactImmutable>();
-        List<Contact> list=currentUser.getContacts();
+        List<Contact> list=s.getContacts();
+        currentUser.setContacts(list);
+        for (Contact c :list)
+            System.err.println(c.getContactName());
         for (Contact contact: list) {
             immutableList.add(new ContactImmutable(contact));
         }
+        trans.commit();
+        session.close();
         return immutableList;
     }
 

@@ -78,6 +78,7 @@ export default {
 
     del() {
       let user=this.$store.getters.getUser
+      this.$root.$emit("navigate",1)
       FolderService.deleteFolder(this.id+4,user.key)
       this.$store.commit("delFolder", this.id + 4);
       this.$root.$emit("refreshFolders");
