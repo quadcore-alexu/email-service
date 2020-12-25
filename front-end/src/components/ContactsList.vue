@@ -33,11 +33,7 @@ export default {
 
   data() {
     return {
-      list: [
-        {contactName: 'Contact 1', contactID: '55', addresses: "a.waleed;waleed;hey;"},
-        {contactName: 'Contact 2', contactID: '56', addresses: "aaaa;aaa2;adw;"},
-
-      ]
+      list: []
     }
   },
 
@@ -51,11 +47,9 @@ export default {
     }
   },
   created() {
-    //TODO load contact list
     EmailService.loadContacts()
     .then(response => {
     this.list=response.data;
-
     })
   }
 }

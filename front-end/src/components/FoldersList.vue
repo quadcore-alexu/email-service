@@ -5,7 +5,7 @@
         <v-list class="overflow-y-auto" dense max-height="256px" nav>
           <v-list-item
               v-for="item in list"
-              :key="item.ID"
+              :key="item.id"
               link
               @click="viewFolder(item)">
             <v-list-item-content>
@@ -30,11 +30,7 @@ export default {
 
   data() {
     return {
-      list: [
-        {name: 'folder1', ID: '11'},
-        {name: 'folder2', ID: '12'},
-        {name: 'folder3', ID: '13'},
-      ]
+      list: []
     }
   },
 
@@ -48,7 +44,10 @@ export default {
   },
 
   created() {
-    //TODO load list of folders from store
+    let folders = this.$store.getters.getUser.folderNames.slice(5)
+    folders.forEach((item, index) => {
+      this.list.push({name: item, id: index + 1})
+    })
   }
 }
 </script>
