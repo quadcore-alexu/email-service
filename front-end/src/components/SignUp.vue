@@ -108,7 +108,7 @@
 </template>
 
 <script>
-
+import signInService from "@/service/signInService";
 export default {
   name: "SignUp",
   data() {
@@ -129,6 +129,7 @@ export default {
       confirmRules: v => v === this.password || 'Passwords not matching',
       emailRules: v => !/@/.test(v) || 'Invalid email address',
       valid: true,
+      list: []
     }
   },
   watch: {
@@ -140,16 +141,28 @@ export default {
     signUp() {
       this.$refs.form.validate();
       if (this.validForm) {
-        if (this.email === "a.waleedothman") {
-          this.$store.commit("setUser", {
-            name: "Ahmad Waleed",
-            email: "a.waleedothman@quadcore.com",
-            key: "mockID"
-          });
-          this.$router.push("/home")
-        } else {
-          this.valid = false;
-        }
+        console.log(this.date)
+        
+        let modifiedDate=this.date.split("-").reverse().join("/")
+        this.list =
+            {name: this.firstname +" "+ this.lastname, email: this.email+'@quadcore.com', password: this.password,DOB:modifiedDate}
+
+        signInService.signUp(this.list).then(response=>{
+          console.log(response.data)
+          const status=response.data
+          if (status === "success") {
+            alert("Signed up successfully")
+            this.$root.$emit("goToSignIn");
+
+          } else {
+            this.valid = false;
+          }
+
+
+        })
+
+
+
       }
     },
     save(date) {

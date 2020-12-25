@@ -13,6 +13,7 @@ import org.hibernate.Transaction;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +35,12 @@ public class Controller {
         Map <String,Object> errorMap=new HashMap<>();
         errorMap.put("authenticated","false");
         return errorMap;
+    }
+    @RequestMapping(value = "/signUp", method = RequestMethod.POST)
+    public String authenticateNewUser(@RequestBody Map<String ,Object> userSignUpInfo) throws ParseException {
+        SecurityFilter.getInstance().createNewUser(userSignUpInfo);
+
+        return "success";
     }
 
     @RequestMapping(value = "/getMail", method = RequestMethod.GET, produces = "application/json")
