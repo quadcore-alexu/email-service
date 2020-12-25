@@ -8,6 +8,9 @@
       <v-col>
         <h3>
           QuadCore
+          <v-icon>
+            mdi-quadcopter
+          </v-icon>
         </h3>
       </v-col>
       <v-col>
