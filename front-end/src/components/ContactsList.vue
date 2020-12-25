@@ -50,7 +50,8 @@ export default {
   created() {
     ContactService.loadContacts()
     .then(response => {
-    this.list=response.data;
+    this.list = response.data;
+      console.log(this.list)
     })
   }
 }

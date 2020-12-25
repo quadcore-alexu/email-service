@@ -165,7 +165,6 @@ public class Controller {
     }
     @RequestMapping(value = "/addFolder",method = RequestMethod.POST)
     public void addFolder(@RequestBody Map<String,Object> folderMap){
-        System.err.println(folderMap);
         UserSession userSession = new UserSession(30);
         userSession.addFolder(folderMap);
     }
@@ -182,18 +181,20 @@ public class Controller {
     }
     @RequestMapping(value = "/addContact",method = RequestMethod.POST)
     public void addContact(@RequestBody Map<String,Object> contactMap){
-        UserSession userSession = new UserSession(1);
+        UserSession userSession = new UserSession(7);
         userSession.addContact(contactMap);
     }
 
     @RequestMapping(value = "/deleteContact",method = RequestMethod.DELETE)
-    public void deleteContact(int contactId){
-        UserSession userSession = new UserSession(1);
+    public void deleteContact(@RequestParam Integer contactId){
+        System.err.println("WE ARE HERE");
+        System.err.println(contactId);
+        UserSession userSession = new UserSession(7);
         userSession.removeContact(contactId);
     }
     @RequestMapping(value = "/editContact",method = RequestMethod.PUT)
     public void editContact(@RequestBody Map<String,Object> contactMap){
-        UserSession userSession = new UserSession(1);
+        UserSession userSession = new UserSession(7);
         userSession.editFolder(contactMap);
     }
 
@@ -220,7 +221,8 @@ public class Controller {
 
     @RequestMapping(value = "/loadContacts",method = RequestMethod.GET)
     public List<ContactImmutable> loadContacts(){
-        UserSession userSession = new UserSession(30);
+        UserSession userSession = new UserSession(7);
+        System.err.println(userSession.loadContacts());
         return userSession.loadContacts();
     }
 
