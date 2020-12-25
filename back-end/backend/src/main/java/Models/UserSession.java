@@ -1,5 +1,6 @@
 package Models;
 
+import Models.Immutables.ContactImmutable;
 import Models.Immutables.EmailHeaderImmutable;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -214,6 +215,42 @@ public class UserSession {
         System.out.println(currentUser.getFolders().size());
     }
 
+    public void addContact(Map<String,Object> contactMap){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        Contact contact=new Contact();
+        contact.setOwner(currentUser);
+        contact.setContactName(contactMap.get("name").toString());
+        contact.setAddresses(contactMap.get("addresses").toString());
+        currentUser.getContacts().add(contact);
+        session.save(contact);
+        trans.commit();
+        session.close();
+    }
+
+    public void editContact(Map<String,Object> contactMap){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        Contact contact=session.find(Contact.class,contactMap.get("id"));
+        contact.setOwner(currentUser);
+        contact.setContactName(contactMap.get("name").toString());
+        contact.setAddresses(contactMap.get("addresses").toString());
+        session.save(contact);
+        trans.commit();
+        session.close();
+    }
+    public void removeContact(int contactID){
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        Contact contact = session.find(Contact.class, contactID);
+        contact.setOwner(currentUser);
+        currentUser.getContacts().remove(contact);
+        session.save(currentUser);
+        trans.commit();
+        session.close();
+        //System.out.println(currentUser.getContacts().size());
+    }
+
     public List<EmailHeader> paging(int pageNumber){
         System.out.println("####################################################################");
         Session session = factory.openSession();
@@ -261,6 +298,15 @@ public class UserSession {
         List<EmailHeaderImmutable> immutableList=toImmutable(headers);
         return immutableList;
 
+    }
+
+    public List<ContactImmutable> loadContacts(){
+        List<ContactImmutable> immutableList = new ArrayList<ContactImmutable>();
+        List<Contact> list=currentUser.getContacts();
+        for (Contact contact: list) {
+            immutableList.add(new ContactImmutable(contact));
+        }
+        return immutableList;
     }
 
     public List<EmailHeaderImmutable> toImmutable(List<EmailHeader> list){

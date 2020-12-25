@@ -26,7 +26,19 @@ class EmailService {
       });
   }
 
-  dumpRetrieve() {
+    drafts(formData) {
+        return axios.put(API_URL + "drafts", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+    }
+
+    loadContacts(){
+        return axios.get(API_URL + "loadContacts");
+    }
+
+    dumpRetrieve() {
     return axios.get(API_URL + "dumpRetrieve");
   }
 }

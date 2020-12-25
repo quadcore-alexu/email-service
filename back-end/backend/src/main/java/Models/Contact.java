@@ -20,6 +20,9 @@ public class Contact {
     @Column(name = "addresses")
     private String addresses;
 
+    @Column(name = "contact_name")
+    private String contactName;
+
     public Integer getContactID() {
         return contactID;
     }
@@ -42,5 +45,13 @@ public class Contact {
 
     public void setAddresses(String addresses) {
         this.addresses = addresses;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String name) {
+        this.contactName = contactName;
     }
 }

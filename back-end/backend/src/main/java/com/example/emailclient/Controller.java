@@ -2,6 +2,7 @@ package com.example.emailclient;
 
 import Misc.FileSaver;
 import Models.*;
+import Models.Immutables.ContactImmutable;
 import Models.Immutables.EmailHeaderImmutable;
 import Models.Immutables.EmailImmutable;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -137,6 +138,23 @@ public class Controller {
         UserSession userSession = new UserSession(1);
         userSession.editFolder(folderMap);
     }
+    @RequestMapping(value = "/addContact",method = RequestMethod.POST)
+    public void addContact(Map<String,Object> contactMap){
+        UserSession userSession = new UserSession(1);
+        userSession.addContact(contactMap);
+    }
+
+    @RequestMapping(value = "/deleteContact",method = RequestMethod.DELETE)
+    public void deleteContact(int contactId){
+        UserSession userSession = new UserSession(1);
+        userSession.removeContact(contactId);
+    }
+    @RequestMapping(value = "/editContact",method = RequestMethod.PUT)
+    public void editContact(Map<String,Object> contactMap){
+        UserSession userSession = new UserSession(1);
+        userSession.editFolder(contactMap);
+    }
+
 
 
     @RequestMapping(value = "/loadMailHeaders",method = RequestMethod.GET)
@@ -144,6 +162,13 @@ public class Controller {
         UserSession userSession = new UserSession(1);
         return userSession.loadEmailHeaders(folderIndex,page,criteria,order);
     }
+
+    @RequestMapping(value = "/loadContacts",method = RequestMethod.GET)
+    public List<ContactImmutable> loadContacts(){
+        UserSession userSession = new UserSession(30);
+        return userSession.loadContacts();
+    }
+
 
     @RequestMapping(value = "/dumpRetrieve", method = RequestMethod.GET)
     public List<EmailHeaderImmutable> dumpRetrieve() {

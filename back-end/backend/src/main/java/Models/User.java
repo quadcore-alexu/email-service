@@ -31,7 +31,7 @@ public class User implements IUserRO {
     private List<Folder> folders = new ArrayList<Folder>() ;
 
     @OneToMany(mappedBy = "owner")
-    private List<Contact> contacts;
+    private List<Contact> contacts=new ArrayList<Contact>();
 
     public Integer getUserID() {
         return userID;
