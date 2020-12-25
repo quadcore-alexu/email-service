@@ -79,8 +79,8 @@ export default {
     },
 
     del() {
-      //delete from database
       ContactService.deleteContact(this.id)
+      this.back();
     }
   },
 

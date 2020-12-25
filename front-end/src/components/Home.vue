@@ -75,9 +75,7 @@
             <v-col cols="9">
               <v-container class="compCont">
                 <v-card height="560">
-                  <keep-alive>
                     <component :is="currentComponent" v-bind="currentProps"/>
-                  </keep-alive>
                 </v-card>
               </v-container>
             </v-col>
@@ -205,7 +203,7 @@ export default {
       this.items = this.items.slice(0, 6)
       let folders = this.$store.getters.getUser.folderNames.slice(5)
       folders.forEach((item, index) => {
-        this.items.push({title: item, icon: 'mdi-folder', key: index + 1})
+        this.items.push({title: item, icon: 'mdi-folder', key: index + 6})
       })
     })
   },
@@ -217,7 +215,7 @@ export default {
     } else {
       let folders = this.$store.getters.getUser.folderNames.slice(5)
       folders.forEach((item, index) => {
-        this.items.push({title: item, icon: 'mdi-folder', key: index + 1})
+        this.items.push({title: item, icon: 'mdi-folder', key: index + 6})
       })
     }
   },
