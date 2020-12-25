@@ -200,10 +200,13 @@ export default {
     });
 
     this.$root.$on("openDraft", (mailID) => {
-      EmailService.getMail(mailID).then(Response => {
+      let user=this.$store.getters.getUser
+      EmailService.getMail(mailID, user.key).then(Response => {
         this.openedMail = Response.data;
         this.currentComponent = Compose;
         this.$root.$emit("setDraft", this.openedMail);
+      }).catch(error => {
+        console.log(error);
       });
     });
 

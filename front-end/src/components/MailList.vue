@@ -8,7 +8,7 @@
         color='accent'
         dark
       >
-        <v-toolbar-title>Inbox</v-toolbar-title>
+        <v-toolbar-title>{{currentFolderName}}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon @click="refresh">
                 <v-icon>mdi-reload</v-icon>
@@ -331,7 +331,10 @@ export default {
     computed: {
       currentFolder () {
           return this.$store.getters.getFolder;
-        }
+      },
+      currentFolderName () {
+          return this.$store.getters.getUser.folderNames[this.currentFolder-1].toUpperCase();
+      }
     },
     watch: {
       selected: function () {

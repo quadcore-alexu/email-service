@@ -7,6 +7,7 @@ class EmailService {
    * @returns success flag
    */
   getMail(emailID,key) {
+    console.log(emailID);
     return axios.get(API_URL + "getMail", {
           params:{
             id: emailID,
@@ -20,7 +21,7 @@ class EmailService {
    * @returns success flag
    */
   sendMail(formData) {
-    return axios.put(API_URL + "sendMail", formData, {
+    return axios.post(API_URL + "sendMail", formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
@@ -117,8 +118,9 @@ class EmailService {
     });
   }
 
-  drafts(formData) {
-    return axios.put(API_URL + "drafts", formData, {
+  sendDraft(formData) {
+    console.log(formData);
+    return axios.post(API_URL + "drafts", formData, {
         headers: {
             "Content-Type": "multipart/form-data"
         }

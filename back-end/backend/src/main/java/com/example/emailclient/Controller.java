@@ -48,22 +48,19 @@ public class Controller {
 
     @RequestMapping(value = "/getMail", method = RequestMethod.GET, produces = "application/json")
     public EmailImmutable getMail(int id,String key) {
-
         UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
         if(userSession!=null) {
+            System.err.println(id);
             EmailImmutable emI = new EmailImmutable(userSession.getMail(id));
-            System.out.println("DDDDDDDDDDDDDDDDDDDDDDDD" + emI.getTitle());
-            System.err.println(key);
             return emI;
         }
         return null;
-
     }
 
-    @RequestMapping(value = "/sendMail", method = RequestMethod.PUT)
+    @RequestMapping(value = "/sendMail", method = RequestMethod.POST)
     public String sendMail( @RequestPart(name ="attachments",required = false) MultipartFile[] attachments,
                             @RequestParam(name ="email") String emailJson,
-                            @RequestParam(name="key" )String key,
+                                @RequestParam(name="key" )String key,
                             @RequestPart(name ="receivers") String receiversStr) {
         Map<String, Object> emailMap = null;
         try {
@@ -92,44 +89,27 @@ public class Controller {
                 return null;
             }
         }
-        //System.out.println(key);
         UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
         if(userSession!=null) {
             userSession.sendEmail(emailMap, receivers, paths);
-            System.out.println(userSession);
             return "Succeeded";
         }
         return "Failed";
     }
 
     @RequestMapping(value = "/drafts",method = RequestMethod.POST)
-    public String drafts(@RequestPart(name ="attachments") MultipartFile[] attachments,
-                         @RequestParam(name ="email") String emailJson){
+    public String drafts(@RequestParam(name ="email") String emailJson, @RequestParam(name="key" )String key){
         Map<String, Object> emailMap = null;
         try {
             emailMap = new ObjectMapper().readValue(emailJson, Map.class);
         } catch (JsonProcessingException e) {
             return null;
         }
-
-        String[] paths = new String[attachments.length];
-        try {
-            int i = 0;
-            for (MultipartFile at: attachments) {
-                SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
-                String fileName = sdf.format(new Date()) + at.getOriginalFilename();
-                String path = FileSaver.saveFile(at, fileName);
-                if (path == null) {
-                    return null;
-                }
-                paths[i] = path;
-                i++;
-            }
-        } catch (Exception e) {
-            return null;
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null) {
+            userSession.draft(emailMap);
+            return "Succeeded";
         }
-        UserSession userSession = new UserSession(1);
-        userSession.draft(emailMap, paths);
         return "Succeeded";
     }
 
@@ -137,7 +117,6 @@ public class Controller {
     @RequestMapping(value = "/moveMail",method = RequestMethod.PUT)
     public void moveMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder,@RequestParam String key){
         UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
-        System.err.println("move mail : "+userSession);
         if(userSession!=null) {
             List<Integer> headersIdList = new ArrayList<Integer>();
             for (String numStr : headersId.split(",")) {
@@ -150,22 +129,14 @@ public class Controller {
     @RequestMapping(value = "/copyMail",method = RequestMethod.PUT)
     public void copyMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder,@RequestParam String key){
         UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
-        System.err.println("copy mail :"+ userSession);
         if(userSession!=null) {
             List<Integer> headersIdList = new ArrayList<Integer>();
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-            for (String numStr : headersId.split(",")) {
-                headersIdList.add(Integer.parseInt(numStr.trim()));
-                System.out.println(Integer.parseInt(numStr.trim()));
-            }
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
             userSession.copyEmail(headersIdList, currentFolder, destinationFolder);
         }
     }
     @RequestMapping(value = "/deleteMail",method = RequestMethod.DELETE)
     public void deleteMail(@RequestParam String headersId, @RequestParam int currentFolder,@RequestParam String key){
         UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
-        System.err.println("delete mail :" + userSession);
         if(userSession!=null) {
             List<Integer> headersIdList = new ArrayList<Integer>();
             for (String numStr : headersId.split(",")) {
@@ -228,7 +199,6 @@ public class Controller {
     @RequestMapping(value = "/loadMailHeaders",method = RequestMethod.GET)
     public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria,Boolean order,String key){
         UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
-        System.err.println(userSession);
         if(userSession!=null) {
             return userSession.loadEmailHeaders(folderIndex, page, criteria, order);
         }
@@ -252,25 +222,4 @@ public class Controller {
         return userSession.loadContacts();
         return null;
     }
-
-
-    @RequestMapping(value = "/dumpRetrieve", method = RequestMethod.GET)
-    public List<EmailHeaderImmutable> dumpRetrieve() {
-        SessionFactory factory = SecurityFilter.getInstance().getSessionFactory();
-        Session session = factory.openSession();
-        Transaction trans = session.beginTransaction();
-        User user = session.find(User.class, 2);
-        List<EmailHeader> realList = user.getFolders().get(0).getHeaders();
-        trans.commit();
-        session.close();
-        List<EmailHeaderImmutable> dumpList = new ArrayList<EmailHeaderImmutable>();
-        for (EmailHeader eh: realList) {
-            dumpList.add(new EmailHeaderImmutable(eh));
-        }
-        for (EmailHeaderImmutable eh: dumpList) {
-            System.out.println(eh.getSenderAddress());
-        }
-        return dumpList;
-    }
-
 }

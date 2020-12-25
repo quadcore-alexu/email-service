@@ -108,13 +108,14 @@ public class UserSession {
         session.close();
     }
 
-    public void draft(Map<String, Object> emailMap,String [] attachmentPaths){
+    public void draft(Map<String, Object> emailMap){
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         Email email = new Email();
-        setEmailContent(email,emailMap,attachmentPaths);
+        setEmailContent(email,emailMap,null);
         EmailHeader emailHeader = createEmailHeader(email);
         emailHeader.setEmail(email);
+        System.err.println(emailHeader.getTitle());
         emailHeader.setFolder(currentUser.getFolders().get(2));
         currentUser.getFolders().get(2).getHeaders().add(emailHeader);
         session.save(emailHeader);
