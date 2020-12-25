@@ -6,6 +6,11 @@
                   style="display: inline-block" class="ma-0 pa-0" hide-details/>
       </v-col>
       <v-col>
+        <h3>
+          QuadCore
+        </h3>
+      </v-col>
+      <v-col>
         <div id="logout">
           <v-btn color="accent" small @click="logout">Logout</v-btn>
         </div>

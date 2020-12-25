@@ -29,6 +29,36 @@
               </v-col>
             </v-row>
             <v-row>
+              <v-menu
+                  ref="menu"
+                  v-model="menu"
+                  :close-on-content-click="false"
+                  min-width="290px"
+                  offset-y
+                  transition="scale-transition"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                      v-model="date"
+                      v-bind="attrs"
+                      v-on="on"
+                      :rules="[requiredRules]"
+                      filled
+                      label="Birthday date"
+                      prepend-inner-icon="mdi-calendar"
+                      readonly
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                    ref="picker"
+                    v-model="date"
+                    :max="new Date().toISOString().substr(0, 10)"
+                    min="1950-01-01"
+                    @change="save"
+                ></v-date-picker>
+              </v-menu>
+            </v-row>
+            <v-row>
               <v-text-field
                   v-model="email"
                   :rules="[requiredRules, emailRules]"
@@ -78,7 +108,7 @@
 </template>
 
 <script>
-
+import signInService from "@/service/signInService";
 export default {
   name: "SignUp",
   data() {
@@ -89,6 +119,8 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
+      date: null,
+      menu: false,
       show1: false,
       show2: false,
       nameRules: v => v.length <= 10 || 'Name must be less than 10 characters',
@@ -97,31 +129,51 @@ export default {
       confirmRules: v => v === this.password || 'Passwords not matching',
       emailRules: v => !/@/.test(v) || 'Invalid email address',
       valid: true,
+      list: []
     }
   },
-
+  watch: {
+    menu(val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+    },
+  },
   methods: {
     signUp() {
       this.$refs.form.validate();
       if (this.validForm) {
-        if (this.email === "a.waleedothman") {
-          this.$store.commit("setUser", {
-            name: "Ahmad Waleed",
-            email: "a.waleedothman@quadcore.com",
-            key: "mockID"
-          });
-          this.$router.push("/home")
-        } else {
-          this.valid = false;
-        }
+        console.log(this.date)
+        
+        let modifiedDate=this.date.split("-").reverse().join("/")
+        this.list =
+            {name: this.firstname +" "+ this.lastname, email: this.email+'@quadcore.com', password: this.password,DOB:modifiedDate}
+
+        signInService.signUp(this.list).then(response=>{
+          console.log(response.data)
+          const status=response.data
+          if (status === "success") {
+            alert("Signed up successfully")
+            this.$root.$emit("goToSignIn");
+
+          } else {
+            this.valid = false;
+          }
+
+
+        })
+
+
+
       }
-    }
+    },
+    save(date) {
+      this.$refs.menu.save(date)
+    },
+    deactivated() {
+      this.password = "";
+      this.confirmPassword = "";
+    },
   },
 
-  deactivated() {
-    this.password = "";
-    this.confirmPassword = "";
-  },
 
 }
 </script>

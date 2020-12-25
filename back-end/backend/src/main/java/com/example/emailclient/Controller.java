@@ -2,6 +2,7 @@ package com.example.emailclient;
 
 import Misc.FileSaver;
 import Models.*;
+import Models.Immutables.ContactImmutable;
 import Models.Immutables.EmailHeaderImmutable;
 import Models.Immutables.EmailImmutable;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +37,12 @@ public class Controller {
         Map <String,Object> errorMap=new HashMap<>();
         errorMap.put("authenticated","false");
         return errorMap;
+    }
+    @RequestMapping(value = "/signUp", method = RequestMethod.POST)
+    public String authenticateNewUser(@RequestBody Map<String ,Object> userSignUpInfo) throws ParseException {
+        SecurityFilter.getInstance().createNewUser(userSignUpInfo);
+
+        return "success";
     }
 
     @RequestMapping(value = "/getMail", method = RequestMethod.GET, produces = "application/json")
@@ -139,8 +147,9 @@ public class Controller {
         userSession.deleteEmail(headersIdList,currentFolder);
     }
     @RequestMapping(value = "/addFolder",method = RequestMethod.POST)
-    public void addFolder(Map<String,Object> folderMap){
-        UserSession userSession = new UserSession(1);
+    public void addFolder(@RequestBody Map<String,Object> folderMap){
+        System.err.println(folderMap);
+        UserSession userSession = new UserSession(30);
         userSession.addFolder(folderMap);
     }
 
@@ -150,10 +159,27 @@ public class Controller {
         userSession.removeFolder(folderId);
     }
     @RequestMapping(value = "/editFolder",method = RequestMethod.PUT)
-    public void editFolder(Map<String,Object> folderMap){
+    public void editFolder(@RequestBody Map<String,Object> folderMap){
         UserSession userSession = new UserSession(1);
         userSession.editFolder(folderMap);
     }
+    @RequestMapping(value = "/addContact",method = RequestMethod.POST)
+    public void addContact(@RequestBody Map<String,Object> contactMap){
+        UserSession userSession = new UserSession(1);
+        userSession.addContact(contactMap);
+    }
+
+    @RequestMapping(value = "/deleteContact",method = RequestMethod.DELETE)
+    public void deleteContact(int contactId){
+        UserSession userSession = new UserSession(1);
+        userSession.removeContact(contactId);
+    }
+    @RequestMapping(value = "/editContact",method = RequestMethod.PUT)
+    public void editContact(@RequestBody Map<String,Object> contactMap){
+        UserSession userSession = new UserSession(1);
+        userSession.editFolder(contactMap);
+    }
+
 
 
     @RequestMapping(value = "/loadMailHeaders",method = RequestMethod.GET)
@@ -167,6 +193,13 @@ public class Controller {
         UserSession userSession = new UserSession(1);
         return userSession.filterEmailHeaders(folderIndex,page,criteria,filterKey);
     }
+
+    @RequestMapping(value = "/loadContacts",method = RequestMethod.GET)
+    public List<ContactImmutable> loadContacts(){
+        UserSession userSession = new UserSession(30);
+        return userSession.loadContacts();
+    }
+
 
     @RequestMapping(value = "/dumpRetrieve", method = RequestMethod.GET)
     public List<EmailHeaderImmutable> dumpRetrieve() {

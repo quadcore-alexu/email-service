@@ -78,15 +78,26 @@
       </v-card-text>
       <v-card-actions style="  position: absolute; bottom: 0; right:0;">
         <v-container>
-          <v-btn color="accent" @click="send">
-            <v-icon left>
-              mdi-send
-            </v-icon>
-            Send
-          </v-btn>
+          <v-row>
+            <v-col>
+              <v-btn color="accent" @click="saveDraft">
+                <v-icon left>
+                  mdi-note
+                </v-icon>
+                Save Draft
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn color="accent" @click="send">
+                <v-icon left>
+                  mdi-send
+                </v-icon>
+                Send
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-container>
       </v-card-actions>
-
     </v-form>
   </div>
 </template>
@@ -159,15 +170,29 @@ export default {
       formData.append("receivers", receiverStr);
       this.files.forEach(element => formData.append("attachments", element));
       EmailService.sendMail(formData)
-      .then(() => {
-        alert("Mail Sent")
-        this.$root.$emit("navigate", 2)
-      })
-      .catch(error => {
-        console.log(error);
-      });
+          .then(() => {
+            alert("Mail Sent")
+            this.$root.$emit("navigate", 2)
+          })
+          .catch(error => {
+            console.log(error);
+          });
+    },
+    saveDraft() {
+      //TODO
+      alert("Draft Saved");
+      this.$root.$emit("navigate", 2)
     }
   },
+
+  mounted() {
+    this.$root.$on("setDraft", (mail) => {
+      this.content = mail.content;
+      this.subject = mail.title;
+      this.priority = mail.priority;
+    })
+  },
+
   directives: {
     focus: {
       inserted: (el) => {

@@ -6,6 +6,11 @@
                   style="display: inline-block" class="ma-0 pa-0" hide-details/>
       </v-col>
       <v-col>
+        <h3>
+          QuadCore
+        </h3>
+      </v-col>
+      <v-col>
         <div id="nav">
           <v-btn color="primary" small style="font-weight: bold" text @click="goToSignIn">Sign-in</v-btn>
           |

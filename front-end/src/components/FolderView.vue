@@ -21,13 +21,22 @@
     </v-card-text>
     <v-card-actions>
       <v-container>
-        <v-btn color="primary" @click="save">Save</v-btn>
+        <v-row>
+          <v-col>
+            <v-btn color="primary" @click="save">Save</v-btn>
+          </v-col>
+          <v-col v-if="!isNew">
+            <v-btn color="error" @click="del">Delete</v-btn>
+          </v-col>
+        </v-row>
       </v-container>
     </v-card-actions>
   </div>
 </template>
 
 <script>
+import FolderService from "../service/FolderService";
+
 export default {
   name: "FolderView",
   props: ['folder', 'isNew'],
@@ -35,8 +44,10 @@ export default {
   data() {
     return {
       name: this.folder.name,
+      id: this.folder.id,
       validForm: false,
       requiredRules: value => !!value || 'Required',
+
     }
   },
 
@@ -48,10 +59,27 @@ export default {
     save() {
       this.$refs.form.validate();
       if (this.validForm) {
-        //TODO check isNew and act accordingly
-        //call back-end
-        //add to list
+
+        let map= []
+
+        if (this.isNew) {
+          map = {name: this.name}
+          FolderService.addFolder(map)
+          this.$store.commit("addFolder", this.name);
+        } else {
+          map = {name: this.name, id: this.id}
+          FolderService.editFolder(map)
+          this.$store.commit("editFolder", this.id, this.name);
+        }
+        this.$root.$emit("refreshFolders")
+        this.back();
       }
+    },
+
+    del() {
+      FolderService.deleteFolder(this.id)
+      this.$store.commit("delFolder", this.id);
+      this.$root.$emit("refreshFolders")
     }
   }
 }

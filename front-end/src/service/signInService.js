@@ -1,4 +1,6 @@
 
+import axios from "axios";
+const API_URL = "http://localhost:9000/api/";
 
 
 //const API_URL = "http://localhost:9000/api/login";
@@ -16,6 +18,12 @@ class loginService {
             .then((result) => {
                 return result
             });
+    }
+
+    signUp(list) {
+        return axios.post(API_URL + "signUp",
+
+                list);
     }
 
 

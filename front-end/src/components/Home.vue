@@ -75,9 +75,7 @@
             <v-col cols="9">
               <v-container class="compCont">
                 <v-card height="560">
-                  <keep-alive>
                     <component :is="currentComponent" v-bind="currentProps"/>
-                  </keep-alive>
                 </v-card>
               </v-container>
             </v-col>
@@ -115,12 +113,12 @@ export default {
     return {
       currentComponent: MailList,
       items: [
-        {title: 'Compose', icon: 'mdi-pencil', key: 1},
-        {title: 'Inbox', icon: 'mdi-inbox', key: 2},
-        {title: 'Sent', icon: 'mdi-telegram', key: 3},
-        {title: 'Draft', icon: 'mdi-note', key: 4},
-        {title: 'Trash', icon: 'mdi-delete', key: 5},
-        {title: 'Archive', icon: 'mdi-archive', key: 6},
+        {title: 'Compose', icon: 'mdi-pencil', key: 0},
+        {title: 'Inbox', icon: 'mdi-inbox', key: 1},
+        {title: 'Sent', icon: 'mdi-telegram', key: 2},
+        {title: 'Draft', icon: 'mdi-note', key: 3},
+        {title: 'Trash', icon: 'mdi-delete', key: 4},
+        {title: 'Archive', icon: 'mdi-archive', key: 5},
       ],
       mail: null,
       user: this.$store.getters.getUser,
@@ -161,36 +159,14 @@ export default {
 
   methods: {
     navigate(key) {
-      switch (key) {
-        case 1:
-          this.currentComponent = Compose;
-          break
-        case 2:
-          this.currentComponent = MailList;
-          this.$store.commit("resetFolder");
-          this.$store.commit("setFolder", key);
-          break
-        case 3:
-          this.currentComponent = MailList;
-          this.$store.commit("resetFolder");
-          this.$store.commit("setFolder", key);
-          break
-        case 4:
-          this.currentComponent = MailList;
-          this.$store.commit("resetFolder");
-          this.$store.commit("setFolder", key);
-          break
-        case 5:
-          this.currentComponent = MailList;
-          this.$store.commit("resetFolder");
-          this.$store.commit("setFolder", key);
-          break
-        case 6:
-          this.currentComponent = MailList;
-          this.$store.commit("resetFolder");
-          this.$store.commit("setFolder", key);
-          break
+      if (key === 0) {
+        this.currentComponent = Compose;
+      } else {
+        this.currentComponent = MailList;
+        this.$store.commit("resetFolder");
+        this.$store.commit("setFolder", key);
       }
+
     },
 
     openContacts() {
@@ -214,10 +190,6 @@ export default {
     this.$root.$on("openMail", (mailID) => {
       //console.log("We need to fetch mail: ", mailID);
       EmailService.getMail(mailID).then(Response => {
-        console.log(Response.data);
-        Response.data.attachments.array.forEach(element => {
-          console.log(element.content);
-        });
         this.openedMail = Response.data;
         this.currentComponent = MailView;
       });
@@ -225,6 +197,14 @@ export default {
 
     this.$root.$on("navigate", (key) => {
       this.navigate(key);
+    });
+
+    this.$root.$on("refreshFolders", () => {
+      this.items = this.items.slice(0, 6)
+      let folders = this.$store.getters.getUser.folderNames.slice(5)
+      folders.forEach((item, index) => {
+        this.items.push({title: item, icon: 'mdi-folder', key: index + 6})
+      })
     })
   },
 
@@ -232,8 +212,14 @@ export default {
     if (this.user === null) {
       this.$root.$emit("logOut");
       this.$destroy();
+    } else {
+      let folders = this.$store.getters.getUser.folderNames.slice(5)
+      folders.forEach((item, index) => {
+        this.items.push({title: item, icon: 'mdi-folder', key: index + 6})
+      })
     }
   },
+
 }
 </script>
 

@@ -9,6 +9,8 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -50,6 +52,56 @@ public class SecurityFilter {
         return "null";
     }
 
+    public void createNewUser(Map<String,Object> userSignUpInfo) throws ParseException {
+         Session session=factory.openSession();
+         Transaction trans = session.beginTransaction();
+         int status=matchesDB((String)userSignUpInfo.get("email"),(String)userSignUpInfo.get("password"));
+         if(status==-1)
+         {
+             User user=new User();
+             user.setUserName((String)userSignUpInfo.get("name"));
+             user.setAddress((String)userSignUpInfo.get("email"));
+             user.setPassword((String)userSignUpInfo.get("password"));
+             user.setDOB(new SimpleDateFormat("dd/MM/yyyy").parse((String)userSignUpInfo.get("DOB")));
+             session.save(user);
+             user.setFolders(createUserFolders(user,session));
+
+             trans.commit();
+             session.close();
+
+
+         }
+
+    }
+
+    private List<Folder> createUserFolders(User user,Session session)
+    {
+
+        List<Folder> folders=new ArrayList<>();
+        Folder inbox=new Folder();
+        inbox.setOwner(user);
+        inbox.setFolderName("inbox");
+        session.save(inbox);
+        Folder sent=new Folder();
+        sent.setOwner(user);
+        sent.setFolderName("sent");
+        session.save(sent);
+        Folder draft=new Folder();
+        draft.setOwner(user);
+        draft.setFolderName("draft");
+        session.save(draft);
+        Folder trash=new Folder();
+        trash.setOwner(user);
+        trash.setFolderName("trash");
+        session.save(trash);
+        Folder archive=new Folder();
+        archive.setOwner(user);
+        archive.setFolderName("archive");
+        session.save(archive);
+
+        return folders;
+    }
+
     public Map<String,Object> generateBasicInfo(String userSessionID)
     {
         String authenticatedUserName=userSessions.get(userSessionID).getCurrentUser().getUserName();
@@ -61,8 +113,13 @@ public class SecurityFilter {
         return basicInfo;
 
     }
+    public boolean isActiveUser(String userSessionID)
+    {
+        return userSessions.containsKey(userSessionID);
 
-    private int matchesDB(String email, String password) {
+    }
+
+    public int matchesDB(String email, String password) {
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         String sql = "SELECT * FROM USERS WHERE  user_address = :user_address AND user_password= :user_password";

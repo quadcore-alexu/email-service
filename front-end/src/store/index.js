@@ -35,6 +35,18 @@ const store = new Vuex.Store({
         resetFolder(state) {
             state.folder = null;
         },
+        resetPage(state) {
+            state.page = null;
+        },
+        addFolder(state, payload) {
+            state.user.folderNames.push(payload)
+        },
+        editFolder(state, id, newName) {
+            state.user.folderNames[id] = newName;
+        },
+        delFolder(state, id) {
+            state.user.folderNames.splice(id);
+        }
     },
     getters: {
         getUser(state) {

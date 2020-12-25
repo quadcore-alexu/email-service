@@ -26,21 +26,31 @@
     </v-card-text>
     <v-card-actions>
       <v-container>
-        <v-btn color="primary" @click="save">Save</v-btn>
+        <v-row>
+          <v-col>
+            <v-btn color="primary" @click="save">Save</v-btn>
+          </v-col>
+          <v-col v-if="!isNew">
+            <v-btn color="error" @click="del">Delete</v-btn>
+          </v-col>
+        </v-row>
       </v-container>
     </v-card-actions>
   </div>
 </template>
 
 <script>
+import ContactService from "../service/ContactService";
+
 export default {
   name: "ContactView",
   props: ['contact', 'isNew'],
 
   data() {
     return {
-      name: this.contact.name,
-      emails: this.contact.emails.replaceAll(";", ";\n"),
+      name: this.contact.contactName,
+      emails: this.contact.addresses.replaceAll(";", ";\n"),
+      id: this.contact.contactID,
       validForm: false,
       requiredRules: value => !!value || 'Required',
     }
@@ -54,10 +64,23 @@ export default {
     save() {
       this.$refs.form.validate();
       if (this.validForm) {
-        //TODO check isNew and act accordingly
-        //call back-end
-        //add to list
+
+        let map= []
+        if(this.isNew){
+          map={name: this.name,addresses: this.emails }
+          ContactService.addContact(map)
+        }
+        else{
+          map={name: this.name,id: this.id,addresses: this.emails }
+          ContactService.editContact(map)
+        }
+        this.back();
       }
+    },
+
+    del() {
+      ContactService.deleteContact(this.id)
+      this.back();
     }
   },
 

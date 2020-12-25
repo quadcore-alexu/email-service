@@ -111,8 +111,16 @@ class EmailService {
     });
   }
 
-  dumpRetrieve() {
-    return axios.get(API_URL + "dumpRetrieve");
-  }
+    drafts(formData) {
+      return axios.put(API_URL + "drafts", formData, {
+          headers: {
+              "Content-Type": "multipart/form-data"
+          }
+      });
+    }
+
+    dumpRetrieve() {
+      return axios.get(API_URL + "dumpRetrieve");
+    }
 }
 export default new EmailService();
