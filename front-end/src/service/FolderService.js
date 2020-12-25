@@ -10,10 +10,11 @@ class FolderService{
         return axios.put(API_URL + "editFolder", folderMap
         );
     }
-    deleteFolder(folderId){
+    deleteFolder(folderId,key){
         return axios.delete(API_URL + "deleteFolder", {
             params:{
-                id: folderId
+                id: folderId,
+                key: key
             }
         });
     }

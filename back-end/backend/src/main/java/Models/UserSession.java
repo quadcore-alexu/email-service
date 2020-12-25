@@ -196,6 +196,7 @@ public class UserSession {
     }
 
     public void editFolder(Map<String, Object> folderMap){
+        System.out.println((int)folderMap.get("id"));
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         Folder folder = session.find(Folder.class, folderMap.get("id"));

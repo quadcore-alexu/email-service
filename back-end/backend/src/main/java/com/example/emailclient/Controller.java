@@ -177,8 +177,11 @@ public class Controller {
     @RequestMapping(value = "/addFolder",method = RequestMethod.POST)
     public void addFolder(@RequestBody Map<String,Object> folderMap){
         System.err.println(folderMap);
-        UserSession userSession = new UserSession(30);
-        userSession.addFolder(folderMap);
+
+        UserSession userSession =SecurityFilter.getInstance().getUserSession((String)folderMap.get("key") );
+        if(userSession!=null) {
+            userSession.addFolder(folderMap);
+        }
     }
 
     @RequestMapping(value = "/deleteFolder",method = RequestMethod.DELETE)
@@ -191,7 +194,10 @@ public class Controller {
     }
     @RequestMapping(value = "/editFolder",method = RequestMethod.PUT)
     public void editFolder(@RequestBody Map<String,Object> folderMap){
-        UserSession userSession = new UserSession(1);
+
+        UserSession userSession = SecurityFilter.getInstance().getUserSession((String) folderMap.get("key"));
+        System.err.println("edit hena "+userSession);
+        if(userSession!=null)
         userSession.editFolder(folderMap);
     }
     @RequestMapping(value = "/addContact",method = RequestMethod.POST)
