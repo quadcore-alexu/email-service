@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.security.Security;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -181,9 +182,12 @@ public class Controller {
     }
 
     @RequestMapping(value = "/deleteFolder",method = RequestMethod.DELETE)
-    public void deleteFolder(int folderId){
-        UserSession userSession = new UserSession(1);
-        userSession.removeFolder(folderId);
+    public void deleteFolder(int id,String key){
+        System.err.println("delete folder wallay "+ key);
+
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null)
+        userSession.removeFolder(id);
     }
     @RequestMapping(value = "/editFolder",method = RequestMethod.PUT)
     public void editFolder(@RequestBody Map<String,Object> folderMap){
