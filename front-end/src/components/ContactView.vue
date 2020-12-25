@@ -48,7 +48,7 @@ export default {
 
   data() {
     return {
-      name: this.contact.contactName,
+      name: this.contact.contact.name,
       emails: this.contact.addresses.replaceAll(";", ";\n"),
       id: this.contact.id,
       validForm: false,
@@ -69,11 +69,11 @@ export default {
         //add to list
         let map= []
         if(this.isNew){
-          map={name: this.name,addresses: this.adresses }
+          map={name: this.name,addresses: this.emails }
           ContactService.addContact(map)
         }
         else{
-          map={name: this.name,id: this.id,addresses: this.adresses }
+          map={name: this.name,id: this.id,addresses: this.emails }
           ContactService.editContact(map)
         }
       }
@@ -83,10 +83,6 @@ export default {
       //delete from database
     }
   },
-  del() {
-    //delete from database
-  },
-
 }
 </script>
 
