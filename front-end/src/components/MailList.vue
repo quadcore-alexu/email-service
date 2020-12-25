@@ -220,16 +220,17 @@ export default {
         this.selected.forEach(num=> {
           headersID.push(this.emailHeaders[num].emailHeaderID);
         });
+        let user=this.$store.getters.getUser
         switch(this.bulkOperation) {
           case 'move':
             console.log("move");
-            EmailService.moveMails(headersID, this.$store.getters.getFolder-2, folderIndex)
+            EmailService.moveMails(headersID, this.$store.getters.getFolder-2, folderIndex,user.key)
             .then(() => {
                 this.refresh();
             });
             break
           case 'copy':
-            EmailService.copyMails(headersID, this.$store.getters.getFolder-2, folderIndex)
+            EmailService.copyMails(headersID, this.$store.getters.getFolder-2, folderIndex,user.key)
             .then(() => {
                 this.refresh();
             });
@@ -316,7 +317,8 @@ export default {
         this.selected.forEach(num=> {
           headersID.push(this.emailHeaders[num].emailHeaderID);
         });
-        EmailService.deleteMails(headersID, this.$store.getters.getFolder-2)
+        let user=this.$store.getters.getUser
+        EmailService.deleteMails(headersID, this.$store.getters.getFolder-2,user.key)
         .then(() => {
             this.refresh();
         });
