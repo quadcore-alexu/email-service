@@ -67,7 +67,7 @@ export default {
           FolderService.addFolder(map)
           this.$store.commit("addFolder", this.name);
         } else {
-          map = {name: this.name, id: this.id,key:user.key}
+          map = {name: this.name, id: this.id+4,key:user.key}
           FolderService.editFolder(map)
           this.$store.commit("editFolder", {id: this.id + 4, name: this.name});
         }
@@ -78,7 +78,7 @@ export default {
 
     del() {
       let user=this.$store.getters.getUser
-      FolderService.deleteFolder(this.id,user.key)
+      FolderService.deleteFolder(this.id+4,user.key)
       this.$store.commit("delFolder", this.id + 4);
       this.$root.$emit("refreshFolders");
       this.back();

@@ -192,7 +192,7 @@ public class UserSession {
         System.out.println((int)folderMap.get("id"));
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
-        Folder folder = session.find(Folder.class, folderMap.get("id"));
+        Folder folder = session.find(Folder.class, currentUser.getFolders().get((int)folderMap.get("id")).getFolderID());
         folder.setOwner(currentUser);
         folder.setFolderName(folderMap.get("name").toString());
         session.save(folder);
@@ -204,7 +204,7 @@ public class UserSession {
     public void removeFolder(int folderID){
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
-        Folder folder = session.find(Folder.class, folderID);
+        Folder folder = session.find(Folder.class,currentUser.getFolders().get(folderID).getFolderID());
         folder.setOwner(currentUser);
         currentUser.getFolders().remove(folder);
         session.save(currentUser);

@@ -63,17 +63,19 @@ export default {
 
     save() {
       this.$refs.form.validate();
+      let user=this.$store.getters.getUser
       if (this.validForm) {
 
         let map= []
+
         if(this.isNew) {
-          map = {name: this.name, addresses: this.emails}
+          map = {name: this.name, addresses: this.emails,key:user.key}
           ContactService.addContact(map).then(() => {
             this.back();
           })
         }
         else {
-          map = {name: this.name, id: this.id, addresses: this.emails}
+          map = {name: this.name, id: this.id, addresses: this.emails,key:user.key}
           ContactService.editContact(map).then(() => {
             this.back();
           })
@@ -82,7 +84,8 @@ export default {
     },
 
     del() {
-      ContactService.deleteContact(this.id).then(() => {
+      let user=this.$store.getters.getUser
+      ContactService.deleteContact(this.id,user.key).then(() => {
         this.back();
       })
     }

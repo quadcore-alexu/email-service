@@ -202,24 +202,25 @@ public class Controller {
     }
     @RequestMapping(value = "/addContact",method = RequestMethod.POST)
     public void addContact(@RequestBody Map<String,Object> contactMap){
-        UserSession userSession = new UserSession(1);
+        UserSession userSession = SecurityFilter.getInstance().getUserSession((String)contactMap.get("key"));
+        System.out.println("add contact" +(String)contactMap.get("key"));
+        if(userSession!=null)
         userSession.addContact(contactMap);
     }
 
     @RequestMapping(value = "/deleteContact",method = RequestMethod.DELETE)
-    public void deleteContact(int contactId){
-        UserSession userSession = new UserSession(1);
-        userSession.removeContact(contactId);
+    public void deleteContact(int id,String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        System.out.println("delete contact" + key);
+        if(userSession!=null)
+        userSession.removeContact(id);
     }
     @RequestMapping(value = "/editContact",method = RequestMethod.PUT)
     public void editContact(@RequestBody Map<String,Object> contactMap){
-<<<<<<< HEAD
-        UserSession userSession = new UserSession(1);
-        userSession.editFolder(contactMap);
-=======
-        UserSession userSession = new UserSession(7);
+        UserSession userSession = SecurityFilter.getInstance().getUserSession((String)contactMap.get("key"));
+        System.out.println("add contact" +(String) contactMap.get("key"));
+        if(userSession!=null)
         userSession.editContact(contactMap);
->>>>>>> 470bdbb6e37591d39775dee594862026c243f06d
     }
 
 
@@ -244,9 +245,12 @@ public class Controller {
     }
 
     @RequestMapping(value = "/loadContacts",method = RequestMethod.GET)
-    public List<ContactImmutable> loadContacts(){
-        UserSession userSession = new UserSession(30);
+    public List<ContactImmutable> loadContacts(String key){
+        System.err.println("load contact key" +key);
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null)
         return userSession.loadContacts();
+        return null;
     }
 
 

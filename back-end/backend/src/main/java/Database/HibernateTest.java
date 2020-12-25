@@ -52,7 +52,7 @@ public class HibernateTest {
         // retrieve user from the data base
         //User retrievedUser = session.find(User.class, 1);*/
         UserSession s=new UserSession(1);
-        s.paging(1);
+
         //s.getUserFromDataBase();
         //s.showFolder();
         // it comes with his folders and mails

@@ -48,7 +48,8 @@ export default {
     }
   },
   created() {
-    ContactService.loadContacts()
+    let user=this.$store.getters.getUser
+    ContactService.loadContacts(user.key)
     .then(response => {
     this.list = response.data;
     })
