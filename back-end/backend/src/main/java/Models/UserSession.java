@@ -7,8 +7,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -136,8 +134,6 @@ public class UserSession {
             emailHeaders.get(i).setFolder(currentUser.getFolders().get(destinationFolder));
             session.saveOrUpdate(emailHeaders.get(i));
         }
-        System.out.println(currentUser.getFolders().get(destinationFolder).getHeaders().size());
-        System.out.println(currentUser.getFolders().get(currentFolder).getHeaders().size());
         trans.commit();
         session.close();
     }
@@ -153,9 +149,6 @@ public class UserSession {
             copiedEmailHeader.setFolder(currentUser.getFolders().get(destinationFolder));
             session.save(copiedEmailHeader);
         }
-
-        System.out.println(currentUser.getFolders().get(destinationFolder).getHeaders().size());
-        System.out.println(currentUser.getFolders().get(currentFolder).getHeaders().size());
 
         trans.commit();
         session.close();
@@ -197,9 +190,10 @@ public class UserSession {
     }
 
     public void editFolder(Map<String, Object> folderMap){
+        System.out.println((int)folderMap.get("id"));
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
-        Folder folder = session.find(Folder.class, folderMap.get("id"));
+        Folder folder = session.find(Folder.class, currentUser.getFolders().get((int)folderMap.get("id")).getFolderID());
         folder.setOwner(currentUser);
         folder.setFolderName(folderMap.get("name").toString());
         session.save(folder);
@@ -211,13 +205,12 @@ public class UserSession {
     public void removeFolder(int folderID){
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
-        Folder folder = session.find(Folder.class, folderID);
+        Folder folder = session.find(Folder.class,currentUser.getFolders().get(folderID).getFolderID());
         folder.setOwner(currentUser);
         currentUser.getFolders().remove(folder);
         session.save(currentUser);
         trans.commit();
         session.close();
-        System.out.println(currentUser.getFolders().size());
     }
 
     public void addContact(Map<String,Object> contactMap){
@@ -255,28 +248,6 @@ public class UserSession {
         session.close();
     }
 
-    public List<EmailHeader> paging(int pageNumber){
-        System.out.println("####################################################################");
-        Session session = factory.openSession();
-        Transaction trans = session.beginTransaction();
-        org.hibernate.Criteria cr = session.createCriteria(EmailHeader.class);
-        int n=6*(pageNumber-1);
-        cr.setFirstResult(7);
-        cr.setMaxResults(6);
-        cr.createAlias("folder", "currentFolder")
-                .add(Restrictions.eq("currentFolder.folderID", 2));
-
-        List<EmailHeader> emailHeaders  = cr.list();
-        for (int i=0;i<emailHeaders.size();i++) {
-            System.out.println("####################################################################");
-            System.out.println(emailHeaders.get(i).getEmailHeaderID());
-            System.out.println("####################################################################");
-        }
-
-        trans.commit();
-        session.close();
-        return emailHeaders;
-    }
 
     public List<String> getFolderNames() {
         List folders = this.currentUser.getFolders();
@@ -306,8 +277,6 @@ public class UserSession {
 
     public List<EmailHeaderImmutable> filterEmailHeaders(int folderIndex, int page, String filteringCriteria, String filterKey){
         Criteria criteria=null;
-        System.err.println(filteringCriteria);
-        System.err.println(filterKey);
         int folderId= currentUser.getFolders().get(folderIndex).getFolderID();
         if (filteringCriteria.equals("search"))
             criteria = new TextSearchEngine(folderId,page);
@@ -343,17 +312,5 @@ public class UserSession {
     public User getCurrentUser() {
         return currentUser;
     }
-
-
-
-    public void test(){
-        Session session = factory.openSession();
-        int x=currentUser.getFolders().get(1).getHeaders().size();
-        int y=currentUser.getFolders().get(2).getHeaders().size();
-        System.out.println(x);
-        System.out.println(y);
-        session.close();
-    }
-
 
 }

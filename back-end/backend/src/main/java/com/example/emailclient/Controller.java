@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.security.Security;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -146,35 +147,51 @@ public class Controller {
     }
     @RequestMapping(value = "/addFolder",method = RequestMethod.POST)
     public void addFolder(@RequestBody Map<String,Object> folderMap){
-        UserSession userSession = new UserSession(30);
-        userSession.addFolder(folderMap);
+        System.err.println(folderMap);
+
+        UserSession userSession =SecurityFilter.getInstance().getUserSession((String)folderMap.get("key") );
+        if(userSession!=null) {
+            userSession.addFolder(folderMap);
+        }
     }
 
     @RequestMapping(value = "/deleteFolder",method = RequestMethod.DELETE)
-    public void deleteFolder(int folderId){
-        UserSession userSession = new UserSession(1);
-        userSession.removeFolder(folderId);
+    public void deleteFolder(int id,String key){
+        System.err.println("delete folder wallay "+ key);
+
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null)
+        userSession.removeFolder(id);
     }
     @RequestMapping(value = "/editFolder",method = RequestMethod.PUT)
     public void editFolder(@RequestBody Map<String,Object> folderMap){
-        UserSession userSession = new UserSession(1);
+
+        UserSession userSession = SecurityFilter.getInstance().getUserSession((String) folderMap.get("key"));
+        System.err.println("edit hena "+userSession);
+        if(userSession!=null)
         userSession.editFolder(folderMap);
     }
     @RequestMapping(value = "/addContact",method = RequestMethod.POST)
     public void addContact(@RequestBody Map<String,Object> contactMap){
-        UserSession userSession = new UserSession(7);
+        UserSession userSession = SecurityFilter.getInstance().getUserSession((String)contactMap.get("key"));
+        System.out.println("add contact" +(String)contactMap.get("key"));
+        if(userSession!=null)
         userSession.addContact(contactMap);
     }
 
     @RequestMapping(value = "/deleteContact",method = RequestMethod.DELETE)
-    public void deleteContact(@RequestParam Integer contactId){
-        UserSession userSession = new UserSession(7);
-        userSession.removeContact(contactId);
+    public void deleteContact(int id,String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        System.out.println("delete contact" + key);
+        if(userSession!=null)
+        userSession.removeContact(id);
     }
     @RequestMapping(value = "/editContact",method = RequestMethod.PUT)
     public void editContact(@RequestBody Map<String,Object> contactMap){
-        UserSession userSession = new UserSession(7);
-        userSession.editFolder(contactMap);
+        UserSession userSession = SecurityFilter.getInstance().getUserSession((String)contactMap.get("key"));
+        System.out.println("add contact" +(String) contactMap.get("key"));
+        if(userSession!=null)
+        userSession.editContact(contactMap);
     }
 
 
@@ -198,8 +215,11 @@ public class Controller {
     }
 
     @RequestMapping(value = "/loadContacts",method = RequestMethod.GET)
-    public List<ContactImmutable> loadContacts(){
-        UserSession userSession = new UserSession(7);
+    public List<ContactImmutable> loadContacts(String key){
+        System.err.println("load contact key" +key);
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null)
         return userSession.loadContacts();
+        return null;
     }
 }

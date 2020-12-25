@@ -222,7 +222,6 @@ export default {
       this.refresh();
 
       this.$root.$on("FolderSelected", (folderIndex) => {
-        console.log("Bulk operation "+ this.bulkOperation + " from folder " + this.$store.getters.getFolder + " to folder "+folderIndex);
         let headersID = []
         this.selected.forEach(num=> {
           headersID.push(this.emailHeaders[num].emailHeaderID);
@@ -230,7 +229,6 @@ export default {
         let user=this.$store.getters.getUser
         switch(this.bulkOperation) {
           case 'move':
-            console.log("move");
             EmailService.moveMails(headersID, this.$store.getters.getFolder-1, folderIndex,user.key)
             .then(() => {
                 this.refresh();
@@ -265,7 +263,6 @@ export default {
         }
       },
       showMail(id) {
-        //console.log("Mail ID", id);
         this.clearSelection = true;
         if (this.currentFolder != 3) {
           this.$root.$emit("openMail", id);
@@ -273,20 +270,13 @@ export default {
           this.$root.$emit("openDraft", id);
         }
       },
-      showSelected() {
-        this.selected.forEach(num=>console.log(this.emailHeaders[num]));
-      },
       setSortingCriteria(criteria) {
         if (this.sortingCriteria == criteria) return;
         this.sortingCriteria = criteria;
-        console.log(this.sortingCriteria);
-        console.log(this.page);
-        console.log(this.$store.getters.getFolder-1);
         this.refresh();
       },
       toggleReverseSorting() {
         this.reverseSorting = !this.reverseSorting;
-        console.log(this.reverseSorting);
         this.refresh();
       },
       openFolderSelection(operation) {
@@ -306,7 +296,6 @@ export default {
         EmailService.getFilteredMailHeaders(this.$store.getters.getFolder-1, this.page, this.selectedFilter, this.searchKey,user.key)
         .then(response => {
           this.emailHeaders = response.data;
-          console.log(response.data);
         });
         this.filterDialog = false;
       },
@@ -353,7 +342,6 @@ export default {
       },
       currentFolder: function() {
         if (this.currentFolder > 0) {
-          console.log(this.currentFolder);
           this.refresh();
         }
       }

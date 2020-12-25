@@ -59,15 +59,15 @@ export default {
     save() {
       this.$refs.form.validate();
       if (this.validForm) {
-
+        let user=this.$store.getters.getUser
         let map= []
 
         if (this.isNew) {
-          map = {name: this.name}
+          map = {name: this.name,key:user.key}
           FolderService.addFolder(map)
           this.$store.commit("addFolder", this.name);
         } else {
-          map = {name: this.name, id: this.id}
+          map = {name: this.name, id: this.id+4,key:user.key}
           FolderService.editFolder(map)
           this.$store.commit("editFolder", {id: this.id + 4, name: this.name});
         }
@@ -77,7 +77,8 @@ export default {
     },
 
     del() {
-      FolderService.deleteFolder(this.id)
+      let user=this.$store.getters.getUser
+      FolderService.deleteFolder(this.id+4,user.key)
       this.$store.commit("delFolder", this.id + 4);
       this.$root.$emit("refreshFolders");
       this.back();

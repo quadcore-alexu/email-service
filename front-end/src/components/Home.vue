@@ -192,7 +192,7 @@ export default {
     });
 
     this.$root.$on("openMail", (mailID) => {
-      let user=this.$store.getters.getUser
+      let user = this.$store.getters.getUser
       EmailService.getMail(mailID, user.key).then(Response => {
         this.openedMail = Response.data;
         this.currentComponent = MailView;

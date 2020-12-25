@@ -41,7 +41,6 @@ export default {
   },
   methods: {
     showFolder(id) {
-      console.log(id)
       this.$root.$emit("FolderSelected", id);
     },
     closeFolderSelection() {

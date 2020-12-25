@@ -3,8 +3,13 @@ const API_URL = "http://localhost:9000/api/";
 
 class ContactService{
 
-    loadContacts(){
-        return axios.get(API_URL + "loadContacts");
+    loadContacts(key){
+        return axios.get(API_URL + "loadContacts",{
+            params:{
+                key:key
+            }
+
+        });
     }
 
     addContact(contactMap){
@@ -15,10 +20,11 @@ class ContactService{
         return axios.put(API_URL + "editContact", contactMap
         );
     }
-    deleteContact(contactId){
+    deleteContact(contactId,key){
         return axios.delete(API_URL + "deleteContact", {
             params:{
-                id: contactId
+                id: contactId,
+                key:key
             }
         });
     }
