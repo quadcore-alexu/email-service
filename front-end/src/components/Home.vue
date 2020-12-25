@@ -192,8 +192,8 @@ export default {
     });
 
     this.$root.$on("openMail", (mailID) => {
-      let user=this.$store.getters.getUser
-      EmailService.getMail(mailID,user.key).then(Response => {
+      let user = this.$store.getters.getUser
+      EmailService.getMail(mailID, user.key).then(Response => {
         this.openedMail = Response.data;
         this.currentComponent = MailView;
       });
@@ -202,7 +202,6 @@ export default {
     this.$root.$on("openDraft", (mailID) => {
       EmailService.getMail(mailID).then(Response => {
         this.openedMail = Response.data;
-        console.log(this.openedMail);
         this.currentComponent = Compose;
         this.$root.$emit("setDraft", this.openedMail);
       });

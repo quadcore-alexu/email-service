@@ -51,7 +51,6 @@ export default {
     ContactService.loadContacts()
     .then(response => {
     this.list = response.data;
-      console.log(this.list)
     })
   }
 }

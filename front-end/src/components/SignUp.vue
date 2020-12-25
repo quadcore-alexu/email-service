@@ -141,14 +141,12 @@ export default {
     signUp() {
       this.$refs.form.validate();
       if (this.validForm) {
-        console.log(this.date)
         
         let modifiedDate=this.date.split("-").reverse().join("/")
         this.list =
             {name: this.firstname +" "+ this.lastname, email: this.email+'@quadcore.com', password: this.password,DOB:modifiedDate}
 
         signInService.signUp(this.list).then(response=>{
-          console.log(response.data)
           const status=response.data
           if (status === "success") {
             alert("Signed up successfully")

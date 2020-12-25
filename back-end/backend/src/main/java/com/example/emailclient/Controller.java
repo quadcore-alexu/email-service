@@ -205,7 +205,7 @@ public class Controller {
     @RequestMapping(value = "/editContact",method = RequestMethod.PUT)
     public void editContact(@RequestBody Map<String,Object> contactMap){
         UserSession userSession = new UserSession(7);
-        userSession.editFolder(contactMap);
+        userSession.editContact(contactMap);
     }
 
 

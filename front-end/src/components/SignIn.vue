@@ -81,13 +81,9 @@ export default {
             folderNames: basicLoginInfo['folder names']
 
           });
-          console.log(basicLoginInfo['folder names'])
           await this.$router.push("/home");
         }
         else this.valid = false;
-        //console.log(this.email)
-        //console.log(this.password)
-
 
       }
     },
