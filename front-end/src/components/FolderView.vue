@@ -21,7 +21,14 @@
     </v-card-text>
     <v-card-actions>
       <v-container>
-        <v-btn color="primary" @click="save">Save</v-btn>
+        <v-row>
+          <v-col>
+            <v-btn color="primary" @click="save">Save</v-btn>
+          </v-col>
+          <v-col>
+            <v-btn color="error" @click="del">Delete</v-btn>
+          </v-col>
+        </v-row>
       </v-container>
     </v-card-actions>
   </div>
@@ -67,6 +74,10 @@ export default {
           FolderService.editFolder(map)
         }
       }
+    },
+
+    del() {
+      //delete from database and update store
     }
   }
 }
