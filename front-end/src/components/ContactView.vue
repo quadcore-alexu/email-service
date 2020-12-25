@@ -30,7 +30,7 @@
           <v-col>
             <v-btn color="primary" @click="save">Save</v-btn>
           </v-col>
-          <v-col>
+          <v-col v-if="!isNew">
             <v-btn color="error" @click="del">Delete</v-btn>
           </v-col>
         </v-row>
@@ -64,9 +64,6 @@ export default {
     save() {
       this.$refs.form.validate();
       if (this.validForm) {
-        //TODO check isNew and act accordingly
-        //call back-end
-        //add to list
         let map= []
         if(this.isNew){
           map={name: this.name,addresses: this.adresses }
@@ -76,15 +73,13 @@ export default {
           map={name: this.name,id: this.id,addresses: this.adresses }
           ContactService.editContact(map)
         }
+        this.back();
       }
     },
 
     del() {
       //delete from database
     }
-  },
-  del() {
-    //delete from database
   },
 
 }
