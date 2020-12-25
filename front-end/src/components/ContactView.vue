@@ -64,9 +64,7 @@ export default {
     save() {
       this.$refs.form.validate();
       if (this.validForm) {
-        //TODO check isNew and act accordingly
-        //call back-end
-        //add to list
+
         let map= []
         if(this.isNew){
           map={name: this.name,addresses: this.emails }
@@ -82,10 +80,8 @@ export default {
 
     del() {
       //delete from database
+      ContactService.deleteContact(this.id)
     }
-  },
-  del() {
-    //delete from database
   },
 
 }

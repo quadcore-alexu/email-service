@@ -15,6 +15,13 @@ class ContactService{
         return axios.put(API_URL + "editContact", contactMap
         );
     }
+    deleteContact(contactId){
+        return axios.delete(API_URL + "deleteContact", {
+            params:{
+                id: contactId
+            }
+        });
+    }
 
 
 }

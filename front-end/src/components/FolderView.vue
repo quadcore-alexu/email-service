@@ -77,8 +77,9 @@ export default {
     },
 
     del() {
-      //this.$store.commit("delFolder", this.id);
-      //this.$root.$emit("refreshFolders")
+      FolderService.deleteFolder(this.id)
+      this.$store.commit("delFolder", this.id);
+      this.$root.$emit("refreshFolders")
     }
   }
 }
