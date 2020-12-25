@@ -41,11 +41,11 @@ const store = new Vuex.Store({
         addFolder(state, payload) {
             state.user.folderNames.push(payload)
         },
-        editFolder(state, id, newName) {
-            state.user.folderNames[id] = newName;
+        editFolder(state, {id, name}) {
+            state.user.folderNames[id] = name;
         },
         delFolder(state, id) {
-            state.user.folderNames.splice(id);
+            state.user.folderNames.splice(id, 1);
         }
     },
     getters: {
