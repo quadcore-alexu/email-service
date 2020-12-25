@@ -30,7 +30,7 @@
           <v-col>
             <v-btn color="primary" @click="save">Save</v-btn>
           </v-col>
-          <v-col>
+          <v-col v-if="!isNew">
             <v-btn color="error" @click="del">Delete</v-btn>
           </v-col>
         </v-row>
@@ -76,6 +76,7 @@ export default {
           map={name: this.name,id: this.id,addresses: this.emails }
           ContactService.editContact(map)
         }
+        this.back();
       }
     },
 
@@ -83,6 +84,10 @@ export default {
       //delete from database
     }
   },
+  del() {
+    //delete from database
+  },
+
 }
 </script>
 

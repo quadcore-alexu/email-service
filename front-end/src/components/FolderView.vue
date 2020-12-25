@@ -25,7 +25,7 @@
           <v-col>
             <v-btn color="primary" @click="save">Save</v-btn>
           </v-col>
-          <v-col>
+          <v-col v-if="!isNew">
             <v-btn color="error" @click="del">Delete</v-btn>
           </v-col>
         </v-row>
@@ -59,25 +59,26 @@ export default {
     save() {
       this.$refs.form.validate();
       if (this.validForm) {
-        //TODO check isNew and act accordingly
-        //call back-end
-        //add to list
 
         let map= []
 
-        if(this.isNew){
-          map={name: this.name }
+        if (this.isNew) {
+          map = {name: this.name}
           FolderService.addFolder(map)
-        }
-        else{
-          map={name: this.name,id: this.id}
+          this.$store.commit("addFolder", this.name);
+        } else {
+          map = {name: this.name, id: this.id}
           FolderService.editFolder(map)
+          this.$store.commit("editFolder", this.id, this.name);
         }
+        this.$root.$emit("refreshFolders")
+        this.back();
       }
     },
 
     del() {
-      //delete from database and update store
+      //this.$store.commit("delFolder", this.id);
+      //this.$root.$emit("refreshFolders")
     }
   }
 }

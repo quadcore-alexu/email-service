@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-card-text>
-      <v-card outlined>
-        <v-list v-if="list.length !== 0" class="overflow-y-auto" dense max-height="256px" nav>
+      <v-card v-if="list.length !== 0" outlined>
+        <v-list class="overflow-y-auto" dense max-height="256px" nav>
           <v-list-item
               v-for="item in list"
               :key="item.id"
@@ -14,8 +14,8 @@
 
           </v-list-item>
         </v-list>
-        <v-container v-else><h3>Tap Add to create new folder</h3></v-container>
       </v-card>
+      <v-container v-else><h3>Tap ADD to create new folder</h3></v-container>
     </v-card-text>
     <v-card-actions>
       <v-container>
