@@ -48,9 +48,9 @@ export default {
 
   data() {
     return {
-      name: this.contact.contact.name,
+      name: this.contact.contactName,
       emails: this.contact.addresses.replaceAll(";", ";\n"),
-      id: this.contact.id,
+      id: this.contact.contactID,
       validForm: false,
       requiredRules: value => !!value || 'Required',
     }

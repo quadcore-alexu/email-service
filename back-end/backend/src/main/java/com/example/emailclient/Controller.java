@@ -130,8 +130,9 @@ public class Controller {
         userSession.deleteEmail(headersId,currentFolder);
     }
     @RequestMapping(value = "/addFolder",method = RequestMethod.POST)
-    public void addFolder(Map<String,Object> folderMap){
-        UserSession userSession = new UserSession(1);
+    public void addFolder(@RequestBody Map<String,Object> folderMap){
+        System.err.println(folderMap);
+        UserSession userSession = new UserSession(30);
         userSession.addFolder(folderMap);
     }
 
@@ -141,12 +142,12 @@ public class Controller {
         userSession.removeFolder(folderId);
     }
     @RequestMapping(value = "/editFolder",method = RequestMethod.PUT)
-    public void editFolder(Map<String,Object> folderMap){
+    public void editFolder(@RequestBody Map<String,Object> folderMap){
         UserSession userSession = new UserSession(1);
         userSession.editFolder(folderMap);
     }
     @RequestMapping(value = "/addContact",method = RequestMethod.POST)
-    public void addContact(Map<String,Object> contactMap){
+    public void addContact(@RequestBody Map<String,Object> contactMap){
         UserSession userSession = new UserSession(1);
         userSession.addContact(contactMap);
     }
@@ -157,7 +158,7 @@ public class Controller {
         userSession.removeContact(contactId);
     }
     @RequestMapping(value = "/editContact",method = RequestMethod.PUT)
-    public void editContact(Map<String,Object> contactMap){
+    public void editContact(@RequestBody Map<String,Object> contactMap){
         UserSession userSession = new UserSession(1);
         userSession.editFolder(contactMap);
     }
