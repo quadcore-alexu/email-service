@@ -2,7 +2,7 @@
   <div>
     <v-card-text>
       <v-card outlined>
-        <v-list class="overflow-y-auto" dense max-height="256px" nav>
+        <v-list v-if="list.length !== 0" class="overflow-y-auto" dense max-height="256px" nav>
           <v-list-item
               v-for="item in list"
               :key="item.contactID"
@@ -14,6 +14,7 @@
 
           </v-list-item>
         </v-list>
+        <v-container v-else><h3>Tap Add to create new contact</h3></v-container>
       </v-card>
     </v-card-text>
     <v-card-actions>
