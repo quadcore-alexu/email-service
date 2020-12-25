@@ -34,9 +34,7 @@ class EmailService {
         });
     }
 
-    loadContacts(){
-        return axios.get(API_URL + "loadContacts");
-    }
+
 
     dumpRetrieve() {
     return axios.get(API_URL + "dumpRetrieve");

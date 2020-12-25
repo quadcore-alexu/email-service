@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import FolderService from "../service/FolderService";
+
 export default {
   name: "FolderView",
   props: ['folder', 'isNew'],
@@ -38,6 +40,7 @@ export default {
       id: this.folder.id,
       validForm: false,
       requiredRules: value => !!value || 'Required',
+
     }
   },
 
@@ -52,6 +55,17 @@ export default {
         //TODO check isNew and act accordingly
         //call back-end
         //add to list
+
+        let map= []
+
+        if(this.isNew){
+          map={name: this.name }
+          FolderService.addFolder(map)
+        }
+        else{
+          map={name: this.name,id: this.id}
+          FolderService.editFolder(map)
+        }
       }
     }
   }

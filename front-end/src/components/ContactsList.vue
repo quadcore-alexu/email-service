@@ -26,7 +26,7 @@
 
 <script>
 
-import EmailService from "../service/EmailService";
+import ContactService from "../service/ContactService";
 
 export default {
   name: "ContactsList",
@@ -47,7 +47,7 @@ export default {
     }
   },
   created() {
-    EmailService.loadContacts()
+    ContactService.loadContacts()
     .then(response => {
     this.list=response.data;
     })

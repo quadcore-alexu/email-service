@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import ContactService from "../service/ContactService";
+
 export default {
   name: "ContactView",
   props: ['contact', 'isNew'],
@@ -41,6 +43,7 @@ export default {
     return {
       name: this.contact.contactName,
       emails: this.contact.addresses.replaceAll(";", ";\n"),
+      id: this.contact.id,
       validForm: false,
       requiredRules: value => !!value || 'Required',
     }
@@ -57,8 +60,20 @@ export default {
         //TODO check isNew and act accordingly
         //call back-end
         //add to list
+        let map= []
+        if(this.isNew){
+          map={name: this.name,addresses: this.adresses }
+          ContactService.addContact(map)
+        }
+        else{
+          map={name: this.name,id: this.id,addresses: this.adresses }
+          ContactService.editContact(map)
+        }
       }
     }
+  },
+  del() {
+    //delete from database
   },
 
 }
