@@ -113,9 +113,9 @@ public class SecurityFilter {
         return basicInfo;
 
     }
-    public boolean isActiveUser(String userSessionID)
+    public UserSession getUserSession(String userSessionID)
     {
-        return userSessions.containsKey(userSessionID);
+        return userSessions.get(userSessionID);
 
     }
 

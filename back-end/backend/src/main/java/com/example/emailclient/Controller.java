@@ -54,8 +54,9 @@ public class Controller {
     }
 
     @RequestMapping(value = "/sendMail", method = RequestMethod.PUT)
-    public String sendMail( @RequestPart(name ="attachments") MultipartFile[] attachments,
+    public String sendMail( @RequestPart(name ="attachments",required = false) MultipartFile[] attachments,
                             @RequestParam(name ="email") String emailJson,
+                            @RequestParam(name="key" )String key,
                             @RequestPart(name ="receivers") String receiversStr) {
         Map<String, Object> emailMap = null;
         try {
@@ -63,27 +64,37 @@ public class Controller {
         } catch (JsonProcessingException e) {
             return null;
         }
+
         String[] receivers = receiversStr.split(" ");
-        String[] paths = new String[attachments.length];
-        try {
-            int i = 0;
-            for (MultipartFile at: attachments) {
-                SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
-                String fileName = sdf.format(new Date()) + at.getOriginalFilename();
-                String path = FileSaver.saveFile(at, fileName);
-                if (path == null) {
-                    return null;
+        String[] paths = null;
+        if (attachments != null) {
+            paths = new String[attachments.length];
+            try {
+                int i = 0;
+                for (MultipartFile at : attachments) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
+                    String fileName = sdf.format(new Date()) + at.getOriginalFilename();
+                    String path = FileSaver.saveFile(at, fileName);
+                    if (path == null) {
+                        return null;
+                    }
+                    paths[i] = path;
+                    i++;
                 }
-                paths[i] = path;
-                i++;
+            } catch (Exception e) {
+                return null;
             }
-        } catch (Exception e) {
-            return null;
         }
-        UserSession userSession = new UserSession(1);
-        userSession.sendEmail(emailMap, receivers, paths);
-        return "Succeeded";
+        //System.out.println(key);
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null) {
+            userSession.sendEmail(emailMap, receivers, paths);
+            System.out.println(userSession);
+            return "Succeeded";
+        }
+        return "Failed";
     }
+
     @RequestMapping(value = "/drafts",method = RequestMethod.POST)
     public String drafts(@RequestPart(name ="attachments") MultipartFile[] attachments,
                          @RequestParam(name ="email") String emailJson){
@@ -184,7 +195,7 @@ public class Controller {
 
     @RequestMapping(value = "/loadMailHeaders",method = RequestMethod.GET)
     public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria,Boolean order){
-        UserSession userSession = new UserSession(1);
+        UserSession userSession = new UserSession(79);
         return userSession.loadEmailHeaders(folderIndex,page,criteria,order);
     }
 

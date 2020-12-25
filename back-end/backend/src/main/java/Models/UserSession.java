@@ -62,14 +62,16 @@ public class UserSession {
         Date date = new Date();
         email.setDate(date);
         session.save(email);
+          if(attachmentPaths!=null) {
+              for (int i = 0; i < attachmentPaths.length; i++) {
+                  Attachment attachment = new Attachment();
+                  attachment.setEmail(email);
+                  attachment.setPath(attachmentPaths[i]);
+                  email.getAttachments().add(attachment);
+                  session.save(attachment);
+              }
 
-        for(int i=0;i<attachmentPaths.length;i++){
-            Attachment attachment=new Attachment();
-            attachment.setEmail(email);
-            attachment.setPath(attachmentPaths[i]);
-            email.getAttachments().add(attachment);
-            session.save(attachment);
-        }
+          }
         return email;
     }
 
