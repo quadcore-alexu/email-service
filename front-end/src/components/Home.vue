@@ -132,6 +132,9 @@ export default {
     currentProps: {
       get: function () {
         if (this.currentComponent === MailView) return {mail: this.openedMail}
+        else if (this.currentComponent === Compose)  {
+            return {mail: this.openedMail}
+        }
         else return null;
       },
 
@@ -160,6 +163,7 @@ export default {
   methods: {
     navigate(key) {
       if (key === 0) {
+        this.openedMail = null;
         this.currentComponent = Compose;
       } else {
         this.currentComponent = MailList;
@@ -188,10 +192,18 @@ export default {
     });
 
     this.$root.$on("openMail", (mailID) => {
-      //console.log("We need to fetch mail: ", mailID);
       EmailService.getMail(mailID).then(Response => {
         this.openedMail = Response.data;
         this.currentComponent = MailView;
+      });
+    });
+
+    this.$root.$on("openDraft", (mailID) => {
+      EmailService.getMail(mailID).then(Response => {
+        this.openedMail = Response.data;
+        console.log(this.openedMail);
+        this.currentComponent = Compose;
+        this.$root.$emit("setDraft", this.openedMail);
       });
     });
 

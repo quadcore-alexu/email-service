@@ -10,6 +10,10 @@
       >
         <v-toolbar-title>Inbox</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-btn icon @click="refresh">
+                <v-icon>mdi-reload</v-icon>
+        </v-btn>
+        <v-spacer></v-spacer>
         <v-text-field
           v-model="searchKey"
           hide-details
@@ -19,12 +23,15 @@
         <v-btn icon @click="applySearch">
                 <v-icon>mdi-magnify</v-icon>
         </v-btn>
+        <v-btn icon v-if="searchKey != ''" @click="clearSearch">
+                <v-icon>mdi-close-box-outline</v-icon>
+        </v-btn>
         <v-btn icon @click="filterDialog=true" >
               <v-icon>mdi-filter-menu-outline</v-icon>
         </v-btn>
         <v-dialog
-        v-model="filterDialog"
-        max-width="500px">
+          v-model="filterDialog"
+          max-width="500px">
           <v-card>
             <v-card-title>
               Filtering
@@ -135,7 +142,6 @@
                 </v-list-item-action>
               </template>
             </v-list-item>
-
           </template>
         </v-list-item-group>
       </v-list>
@@ -214,6 +220,7 @@ export default {
     mounted() {
       this.selected = [];
       this.refresh();
+
       this.$root.$on("FolderSelected", (folderIndex) => {
         console.log("Bulk operation "+ this.bulkOperation + " from folder " + this.$store.getters.getFolder + " to folder "+folderIndex);
         let headersID = []
@@ -223,13 +230,13 @@ export default {
         switch(this.bulkOperation) {
           case 'move':
             console.log("move");
-            EmailService.moveMails(headersID, this.$store.getters.getFolder-2, folderIndex)
+            EmailService.moveMails(headersID, this.$store.getters.getFolder-1, folderIndex)
             .then(() => {
                 this.refresh();
             });
             break
           case 'copy':
-            EmailService.copyMails(headersID, this.$store.getters.getFolder-2, folderIndex)
+            EmailService.copyMails(headersID, this.$store.getters.getFolder-1, folderIndex)
             .then(() => {
                 this.refresh();
             });
@@ -257,9 +264,13 @@ export default {
         }
       },
       showMail(id) {
-        console.log("Mail ID", id);
+        //console.log("Mail ID", id);
         this.clearSelection = true;
-        this.$root.$emit("openMail", id);
+        if (this.currentFolder != 3) {
+          this.$root.$emit("openMail", id);
+        } else {
+          this.$root.$emit("openDraft", id);
+        }
       },
       showSelected() {
         this.selected.forEach(num=>console.log(this.emailHeaders[num]));
@@ -269,7 +280,7 @@ export default {
         this.sortingCriteria = criteria;
         console.log(this.sortingCriteria);
         console.log(this.page);
-        console.log(this.$store.getters.getFolder-2);
+        console.log(this.$store.getters.getFolder-1);
         this.refresh();
       },
       toggleReverseSorting() {
@@ -278,6 +289,7 @@ export default {
         this.refresh();
       },
       openFolderSelection(operation) {
+        if (this.selected.length == 0) return
         this.bulkOperation = operation;
         this.showMask = true;
       },
@@ -286,23 +298,25 @@ export default {
         this.refresh();
       },
       applySearch() {
-        console.log(this.searchKey);
-        console.log(this.selectedFilter);
         if(this.filterDialog && this.selectedFilter == "Date") {
           this.searchKey = this.fileringDate;
         }
-        EmailService.getFilteredMailHeaders(this.$store.getters.getFolder-2, this.page, this.selectedFilter, this.searchKey)
+        EmailService.getFilteredMailHeaders(this.$store.getters.getFolder-1, this.page, this.selectedFilter, this.searchKey)
         .then(response => {
           this.emailHeaders = response.data;
           console.log(response.data);
         });
+        this.filterDialog = false;
+      },
+      clearSearch(){
         this.searchKey = '';
         this.filterDialog = false;
         this.selectedFilter = 'search';
-        this.fileringDate = null
+        this.fileringDate = null;
+        this.refresh();
       },
       refresh() {
-        EmailService.getMailHeaders(this.$store.getters.getFolder-2, this.page,
+        EmailService.getMailHeaders(this.$store.getters.getFolder-1, this.page,
                                     this.sortingCriteria, this.reverseSorting)
         .then(response => {
           this.emailHeaders = response.data;
@@ -310,21 +324,33 @@ export default {
         });
       },
       deleteMails() {
+        if (this.selected.length == 0) return
         let headersID = []
         this.selected.forEach(num=> {
           headersID.push(this.emailHeaders[num].emailHeaderID);
         });
-        EmailService.deleteMails(headersID, this.$store.getters.getFolder-2)
+        EmailService.deleteMails(headersID, this.$store.getters.getFolder-1)
         .then(() => {
             this.refresh();
         });
       }
+    },
+    computed: {
+      currentFolder () {
+          return this.$store.getters.getFolder;
+        }
     },
     watch: {
       selected: function () {
         if (this.clearSelection == true) {
           this.selected = [];
           this.clearSelection = false;
+        }
+      },
+      currentFolder: function() {
+        if (this.currentFolder > 0) {
+          console.log(this.currentFolder);
+          this.refresh();
         }
       }
     }

@@ -52,6 +52,6 @@ public class Contact {
     }
 
     public void setContactName(String name) {
-        this.contactName = contactName;
+        this.contactName = name;
     }
 }

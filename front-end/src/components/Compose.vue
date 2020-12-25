@@ -108,6 +108,7 @@ import EmailService from "../service/EmailService";
 
 export default {
   name: "Compose",
+  props: ['mail'],
   data() {
     return {
       validForm: false,
@@ -184,15 +185,6 @@ export default {
       this.$root.$emit("navigate", 2)
     }
   },
-
-  mounted() {
-    this.$root.$on("setDraft", (mail) => {
-      this.content = mail.content;
-      this.subject = mail.title;
-      this.priority = mail.priority;
-    })
-  },
-
   directives: {
     focus: {
       inserted: (el) => {
@@ -216,7 +208,14 @@ export default {
         //
       }
     }
+  },
 
+  created () {
+      if (this.mail !== null) {
+        this.content = this.mail.content;
+        this.subject = this.mail.title;
+        this.priority = this.mail.priority;
+      }
   }
 }
 </script>
