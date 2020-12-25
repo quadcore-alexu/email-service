@@ -182,9 +182,22 @@ export default {
           });
     },
     saveDraft() {
-      //TODO
       alert("Draft Saved");
-      this.$root.$emit("navigate", 2)
+      let formData = new FormData();
+      let email = new Email();
+      email.title = this.subject;
+      email.content = this.content;
+      email.priority = this.priority;
+      let user=this.$store.getters.getUser
+      formData.append("email", JSON.stringify(email));
+      formData.append("key",user.key);
+      EmailService.sendDraft(formData)
+      .then(() => {
+        this.$root.$emit("navigate", 2)
+      })
+      .catch(error => {
+        console.log(error);
+      });
     }
   },
   directives: {
