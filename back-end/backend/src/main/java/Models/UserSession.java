@@ -208,7 +208,6 @@ public class UserSession {
     }
 
     public void removeFolder(int folderID){
-        System.out.print("folder id"+folderID);
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         Folder folder = session.find(Folder.class, folderID);
