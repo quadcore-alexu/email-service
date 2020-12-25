@@ -29,6 +29,36 @@
               </v-col>
             </v-row>
             <v-row>
+              <v-menu
+                  ref="menu"
+                  v-model="menu"
+                  :close-on-content-click="false"
+                  min-width="290px"
+                  offset-y
+                  transition="scale-transition"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                      v-model="date"
+                      v-bind="attrs"
+                      v-on="on"
+                      :rules="[requiredRules]"
+                      filled
+                      label="Birthday date"
+                      prepend-inner-icon="mdi-calendar"
+                      readonly
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                    ref="picker"
+                    v-model="date"
+                    :max="new Date().toISOString().substr(0, 10)"
+                    min="1950-01-01"
+                    @change="save"
+                ></v-date-picker>
+              </v-menu>
+            </v-row>
+            <v-row>
               <v-text-field
                   v-model="email"
                   :rules="[requiredRules, emailRules]"
@@ -89,6 +119,8 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
+      date: null,
+      menu: false,
       show1: false,
       show2: false,
       nameRules: v => v.length <= 10 || 'Name must be less than 10 characters',
@@ -99,7 +131,11 @@ export default {
       valid: true,
     }
   },
-
+  watch: {
+    menu(val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+    },
+  },
   methods: {
     signUp() {
       this.$refs.form.validate();
@@ -115,13 +151,16 @@ export default {
           this.valid = false;
         }
       }
-    }
+    },
+    save(date) {
+      this.$refs.menu.save(date)
+    },
+    deactivated() {
+      this.password = "";
+      this.confirmPassword = "";
+    },
   },
 
-  deactivated() {
-    this.password = "";
-    this.confirmPassword = "";
-  },
 
 }
 </script>
