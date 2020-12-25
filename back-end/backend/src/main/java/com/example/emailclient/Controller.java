@@ -127,7 +127,7 @@ public class Controller {
         } catch (Exception e) {
             return null;
         }
-        UserSession userSession = new UserSession(1);
+        UserSession userSession = new UserSession(7);
         userSession.draft(emailMap, paths);
         return "Succeeded";
     }
@@ -175,18 +175,18 @@ public class Controller {
     }
     @RequestMapping(value = "/addFolder",method = RequestMethod.POST)
     public void addFolder(@RequestBody Map<String,Object> folderMap){
-        UserSession userSession = new UserSession(30);
+        UserSession userSession = new UserSession(7);
         userSession.addFolder(folderMap);
     }
 
     @RequestMapping(value = "/deleteFolder",method = RequestMethod.DELETE)
-    public void deleteFolder(int folderId){
-        UserSession userSession = new UserSession(1);
-        userSession.removeFolder(folderId);
+    public void deleteFolder(int id){
+        UserSession userSession = new UserSession(7);
+        userSession.removeFolder(id);
     }
     @RequestMapping(value = "/editFolder",method = RequestMethod.PUT)
     public void editFolder(@RequestBody Map<String,Object> folderMap){
-        UserSession userSession = new UserSession(1);
+        UserSession userSession = new UserSession(7);
         userSession.editFolder(folderMap);
     }
     @RequestMapping(value = "/addContact",method = RequestMethod.POST)
@@ -196,11 +196,11 @@ public class Controller {
     }
 
     @RequestMapping(value = "/deleteContact",method = RequestMethod.DELETE)
-    public void deleteContact(@RequestParam Integer contactId){
+    public void deleteContact(int id){
         System.err.println("WE ARE HERE");
-        System.err.println(contactId);
+        System.err.println(id);
         UserSession userSession = new UserSession(7);
-        userSession.removeContact(contactId);
+        userSession.removeContact(id);
     }
     @RequestMapping(value = "/editContact",method = RequestMethod.PUT)
     public void editContact(@RequestBody Map<String,Object> contactMap){
@@ -232,7 +232,6 @@ public class Controller {
     @RequestMapping(value = "/loadContacts",method = RequestMethod.GET)
     public List<ContactImmutable> loadContacts(){
         UserSession userSession = new UserSession(7);
-        System.err.println(userSession.loadContacts());
         return userSession.loadContacts();
     }
 
