@@ -6,6 +6,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,18 +47,18 @@ public class UserSession {
         EmailHeader emailHeader = new EmailHeader();
         emailHeader.setTitle(email.getTitle());
         emailHeader.setEmail(email);
-        emailHeader.setSender(currentUser);
+        emailHeader.setSender(email.getSender());
         emailHeader.setDate(email.getDate());
         emailHeader.setPriority(email.getPriority());
         return emailHeader;
     }
-    public void setEmailContent(Email email,Map<String, Object> emailMap,String [] attachmentPaths){
+    public Email setEmailContent(Email email,Map<String, Object> emailMap,String [] attachmentPaths){
         Session session = factory.openSession();
         email.setTitle(emailMap.get("title").toString());
         email.setPriority((int)emailMap.get("priority"));
         email.setContent(emailMap.get("content").toString());
         email.setSender(currentUser);
-        Date date=new Date();
+        Date date = new Date();
         email.setDate(date);
         session.save(email);
 
@@ -67,7 +69,7 @@ public class UserSession {
             email.getAttachments().add(attachment);
             session.save(attachment);
         }
-
+        return email;
     }
 
 
@@ -75,7 +77,7 @@ public class UserSession {
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         Email email = new Email();
-        setEmailContent(email,emailMap,attachmentPaths);
+        email = setEmailContent(email,emailMap,attachmentPaths);
         String idList="(";
         for (int i=0;i<receiver_address.length-1;i++){
             idList+="'"+receiver_address[i]+"'";
@@ -119,34 +121,33 @@ public class UserSession {
         session.close();
     }
 
-    public void moveEmail(int []headersId,int currentFolder,int destinationFolder){
+    public void moveEmail(List<Integer> headersId,int currentFolder,int destinationFolder){
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
 
-        List<EmailHeader> emailHeaders=getEmailHeader(headersId);
+        List<EmailHeader> emailHeaders=getEmailHeader(headersId, currentUser.getFolders().get(currentFolder).getFolderID());
         for (int i=0;i<emailHeaders.size();i++){
             currentUser.getFolders().get(destinationFolder).getHeaders().add(emailHeaders.get(i));
             currentUser.getFolders().get(currentFolder).getHeaders().remove(emailHeaders.get(i));
             emailHeaders.get(i).setFolder(currentUser.getFolders().get(destinationFolder));
-            session.save(emailHeaders.get(i));
-
+            session.saveOrUpdate(emailHeaders.get(i));
         }
-
         System.out.println(currentUser.getFolders().get(destinationFolder).getHeaders().size());
         System.out.println(currentUser.getFolders().get(currentFolder).getHeaders().size());
-
         trans.commit();
         session.close();
     }
-    public void copyEmail(int []headersId,int currentFolder,int destinationFolder){
+
+    public void copyEmail(List<Integer> headersId,int currentFolder,int destinationFolder){
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
 
-        List<EmailHeader> emailHeaders=getEmailHeader(headersId);
-        for (int i=0;i<emailHeaders.size();i++){
-            currentUser.getFolders().get(destinationFolder).getHeaders().add(emailHeaders.get(i));
-            emailHeaders.get(i).setFolder(currentUser.getFolders().get(destinationFolder));
-            session.save(emailHeaders.get(i));
+        List<EmailHeader> emailHeaders=getEmailHeader(headersId, currentUser.getFolders().get(currentFolder).getFolderID());
+        for (EmailHeader emailHeader: emailHeaders){
+            EmailHeader copiedEmailHeader = createEmailHeader(emailHeader.getEmail());
+            currentUser.getFolders().get(destinationFolder).getHeaders().add(copiedEmailHeader);
+            copiedEmailHeader.setFolder(currentUser.getFolders().get(destinationFolder));
+            session.save(copiedEmailHeader);
         }
 
         System.out.println(currentUser.getFolders().get(destinationFolder).getHeaders().size());
@@ -156,21 +157,22 @@ public class UserSession {
         session.close();
     }
 
-    public void deleteEmail(int []headersId,int currentFolder){
+    public void deleteEmail(List<Integer> headersId,int currentFolder){
         moveEmail(headersId,currentFolder,3);
     }
 
-    public List<EmailHeader> getEmailHeader(int[] headersId){
+    public List<EmailHeader> getEmailHeader(List<Integer> headersId, int currentFolder){
         Session session = factory.openSession();
         String idList="(";
-        for (int i=0;i<headersId.length-1;i++){
-            idList+="'"+headersId[i]+"'";
+        for (int i=0;i<headersId.size()-1;i++){
+            idList+="'"+headersId.get(i)+"'";
             idList+=",";
         }
-        idList+="'"+headersId[headersId.length-1]+"'";
+        idList+="'"+headersId.get(headersId.size()-1)+"'";
         idList+=")";
         String sql = "SELECT * FROM EMAIL_HEADERS WHERE email_header_id IN ";
         sql+=idList;
+        sql += " AND folder_id = " + currentFolder;
         SQLQuery query = session.createSQLQuery(sql);
         query.addEntity(EmailHeader.class);
         List<EmailHeader> emailHeaders=query.list();
@@ -243,21 +245,40 @@ public class UserSession {
         for (int i = 0; i < folders.size(); i++) {
             Folder f= (Folder) folders.get(i);
             folderNames.add(f.getFolderName());
-
         }
         return folderNames;
     }
 
-    public List<EmailHeaderImmutable> loadEmailHeaders(int folderIndex, int page, String sortingCriteria,Boolean order){
+    public List<EmailHeaderImmutable> loadEmailHeaders(int folderIndex, int page, String sortingCriteria, Boolean order){
         SortCriteria criteria=null;
         int folderId= currentUser.getFolders().get(folderIndex).getFolderID();
-        if (sortingCriteria=="date")
+        if (sortingCriteria.equals("date"))
             criteria=new SortCriteriaDate(folderId,page,order);
-        else if(sortingCriteria=="priority")
+        else if(sortingCriteria.equals("priority"))
             criteria=new SortCriteriaPriority(folderId,page,order);
-        else if (sortingCriteria=="subject")
+        else if (sortingCriteria.equals("subject"))
             criteria=new SortCriteriaSubject(folderId,page,order);
+        else if (sortingCriteria.equals("sender"))
+            criteria=new SortCriteriaSender(folderId,page,order);
         List<EmailHeader>headers=criteria.sort();
+        List<EmailHeaderImmutable> immutableList=toImmutable(headers);
+        return immutableList;
+    }
+
+    public List<EmailHeaderImmutable> filterEmailHeaders(int folderIndex, int page, String filteringCriteria, String filterKey){
+        Criteria criteria=null;
+        System.err.println(filteringCriteria);
+        System.err.println(filterKey);
+        int folderId= currentUser.getFolders().get(folderIndex).getFolderID();
+        if (filteringCriteria.equals("search"))
+            criteria = new TextSearchEngine(folderId,page);
+        else if(filteringCriteria.equals("Date"))
+            criteria = new CriteriaDate(folderId,page);
+        else if (filteringCriteria.equals("Title"))
+            criteria = new CriteriaSubject(folderId, page);
+        else if (filteringCriteria.equals("Sender"))
+            criteria = new CriteriaSender(folderId, page);
+        List<EmailHeader>headers=criteria.meetCriteria(filterKey);
         List<EmailHeaderImmutable> immutableList=toImmutable(headers);
         return immutableList;
 

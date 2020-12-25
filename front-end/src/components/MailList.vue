@@ -10,6 +10,59 @@
       >
         <v-toolbar-title>Inbox</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-text-field
+          v-model="searchKey"
+          hide-details
+          label="Search"
+          single-line
+        ></v-text-field>
+        <v-btn icon @click="applySearch">
+                <v-icon>mdi-magnify</v-icon>
+        </v-btn>
+        <v-btn icon @click="filterDialog=true" >
+              <v-icon>mdi-filter-menu-outline</v-icon>
+        </v-btn>
+        <v-dialog
+        v-model="filterDialog"
+        max-width="500px">
+          <v-card>
+            <v-card-title>
+              Filtering
+            </v-card-title>
+            <v-card-text>
+              <v-select
+                v-model="selectedFilter"
+                :items="filters"
+                label="Filter"
+                item-value="text"
+                color="accent"
+              ></v-select>
+              <v-date-picker v-model="fileringDate" v-if="selectedFilter=='Date'"></v-date-picker>
+              <v-text-field
+                v-model="searchKey"
+                v-if="selectedFilter!='Date'"
+                color="accent"
+              />
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                color="accent"
+                text
+                @click="filterDialog = false"
+              >
+                Close
+              </v-btn>
+              <v-btn
+                color="accent"
+                text
+                @click="applySearch"
+              >
+                Filter
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-spacer></v-spacer>
         <v-btn-toggle color="dark" shaped dense group mandatory>
           <v-tooltip bottom>
             <template v-slot:activator="{ on }" >
@@ -33,15 +86,15 @@
                 Sender
               </v-btn>
             </template>
-            <span>Sort by sender address</span>
+            <span>Sort by sender name</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on }" >
-              <v-btn v-on="on" @click="setSortingCriteria('title')">
+              <v-btn v-on="on" @click="setSortingCriteria('subject')">
                 Title
               </v-btn>
             </template>
-            <span>Sort by mail title</span>
+            <span>Sort by mail subject</span>
           </v-tooltip>
         </v-btn-toggle>
           <v-tooltip bottom>
@@ -90,7 +143,7 @@
     <div class="py-0 py-2 px-4" style="bottom: 0;">
       <v-row>
         <v-col>
-          <v-btn v-if="page > 1" color="accent" @click="page-=1">
+          <v-btn v-if="page > 1" color="accent" @click="paging(-1)">
               <v-icon left>
                 mdi-page-previous
               </v-icon>
@@ -114,7 +167,7 @@
           </v-btn>
         </v-col>
         <v-col>
-          <v-btn @click="openFolderSelection('delete')" block color="accent">
+          <v-btn @click="deleteMails" block color="accent">
             <v-icon left>
               mdi-delete-circle
             </v-icon>
@@ -122,7 +175,7 @@
           </v-btn>
         </v-col>
         <v-col>
-          <v-btn v-if="emailHeaders != null && emailHeaders.length >= 6" color="accent" @click="page+=1">
+          <v-btn v-if="emailHeaders != null && emailHeaders.length >= 6" color="accent" @click="paging(1)">
             Next
             <v-icon right>
               mdi-page-next
@@ -130,25 +183,13 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-row>
-        <v-card-actions style="  position: absolute; bottom: 0; left:0;">
-          <v-container>
-            
-          </v-container>
-        </v-card-actions>
-        <v-card-actions >
-        <v-container>
-          
-        </v-container>
-      </v-card-actions>
-      </v-row>
     </div>
   </div>
 </template>
 
 <script>
 import EmailService from "../service/EmailService";
-import Folders from "./Folders";
+import FolderSelection from './FolderSelection';
 import MyMask from "./MyMask";
 
 export default {
@@ -157,22 +198,50 @@ export default {
     data: () => ({
       emailHeaders: null,
       selected: [],
+      clearSelection: false,
       sortingCriteria: 'date',
-      reverseSorting: true,
+      reverseSorting: false,
       page: 1,
       showMask: false,
       bulkOperation:'',
-      maskComponent: {component: Folders}
+      maskComponent: {component: FolderSelection},
+      searchKey: '',
+      filterDialog: false,
+      filters: ["Date", "Title", "Sender"],
+      selectedFilter: 'search',
+      fileringDate: null
     }),
     mounted() {
-      EmailService.dumpRetrieve()
-      .then(response => {
-        this.emailHeaders = response.data;
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      })
+      this.selected = [];
+      this.refresh();
+      this.$root.$on("FolderSelected", (folderIndex) => {
+        console.log("Bulk operation "+ this.bulkOperation + " from folder " + this.$store.getters.getFolder + " to folder "+folderIndex);
+        let headersID = []
+        this.selected.forEach(num=> {
+          headersID.push(this.emailHeaders[num].emailHeaderID);
+        });
+        switch(this.bulkOperation) {
+          case 'move':
+            console.log("move");
+            EmailService.moveMails(headersID, this.$store.getters.getFolder-2, folderIndex)
+            .then(() => {
+                this.refresh();
+            });
+            break
+          case 'copy':
+            EmailService.copyMails(headersID, this.$store.getters.getFolder-2, folderIndex)
+            .then(() => {
+                this.refresh();
+            });
+            break
+        }
+        this.showMask = false;
+      });
+      this.$root.$on("CloseFoldersModal", () => {
+        this.bulkOperation = '';
+        this.selected = [];
+        this.showMask = false;
+      });
     },
     methods: {
       getPriority(level) {
@@ -189,6 +258,7 @@ export default {
       },
       showMail(id) {
         console.log("Mail ID", id);
+        this.clearSelection = true;
         this.$root.$emit("openMail", id);
       },
       showSelected() {
@@ -199,18 +269,64 @@ export default {
         this.sortingCriteria = criteria;
         console.log(this.sortingCriteria);
         console.log(this.page);
-        /**
-         * Here call the backend to apply the new sorting criteria
-         */
+        console.log(this.$store.getters.getFolder-2);
+        this.refresh();
       },
       toggleReverseSorting() {
         this.reverseSorting = !this.reverseSorting;
         console.log(this.reverseSorting);
+        this.refresh();
       },
       openFolderSelection(operation) {
         this.bulkOperation = operation;
         this.showMask = true;
       },
+      paging(step) {
+        this.page += step;
+        this.refresh();
+      },
+      applySearch() {
+        console.log(this.searchKey);
+        console.log(this.selectedFilter);
+        if(this.filterDialog && this.selectedFilter == "Date") {
+          this.searchKey = this.fileringDate;
+        }
+        EmailService.getFilteredMailHeaders(this.$store.getters.getFolder-2, this.page, this.selectedFilter, this.searchKey)
+        .then(response => {
+          this.emailHeaders = response.data;
+          console.log(response.data);
+        });
+        this.searchKey = '';
+        this.filterDialog = false;
+        this.selectedFilter = 'search';
+        this.fileringDate = null
+      },
+      refresh() {
+        EmailService.getMailHeaders(this.$store.getters.getFolder-2, this.page,
+                                    this.sortingCriteria, this.reverseSorting)
+        .then(response => {
+          this.emailHeaders = response.data;
+          this.selected = [];
+        });
+      },
+      deleteMails() {
+        let headersID = []
+        this.selected.forEach(num=> {
+          headersID.push(this.emailHeaders[num].emailHeaderID);
+        });
+        EmailService.deleteMails(headersID, this.$store.getters.getFolder-2)
+        .then(() => {
+            this.refresh();
+        });
+      }
+    },
+    watch: {
+      selected: function () {
+        if (this.clearSelection == true) {
+          this.selected = [];
+          this.clearSelection = false;
+        }
+      }
     }
   }
 </script>

@@ -215,6 +215,9 @@ export default {
       //console.log("We need to fetch mail: ", mailID);
       EmailService.getMail(mailID).then(Response => {
         console.log(Response.data);
+        Response.data.attachments.array.forEach(element => {
+          console.log(element.content);
+        });
         this.openedMail = Response.data;
         this.currentComponent = MailView;
       });

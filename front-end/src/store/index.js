@@ -12,7 +12,7 @@ const store = new Vuex.Store({
         dark: false,
         user: null,
         folder: 2,
-        page:1
+        dumpFolders: [{"ID": 0 ,"name" : "Inbox"}, {"ID": 1 ,"name" : "Sent"}, {"ID": 2 ,"name" : "User defined"}]
     },
     mutations: {
         setDark(state, payload) {
@@ -24,23 +24,16 @@ const store = new Vuex.Store({
         setFolder(state, payload) {
             state.folder = payload;
         },
-        setPage(state, payload) {
-            state.page = payload;
-        },
         resetUser(state) {
             state.user = null;
             state.openedMail = null;
             state.folder = 2;
-            state.page = 0;
         },
         resetDark(state) {
             state.dark = null;
         },
         resetFolder(state) {
             state.folder = null;
-        },
-        resetPage(state) {
-            state.page = null;
         },
     },
     getters: {
@@ -53,9 +46,9 @@ const store = new Vuex.Store({
         getFolder(state) {
             return state.folder;
         },
-        getPage(state) {
-            return state.page;
-        }
+        dumpFolders(state) {
+            return state.dumpFolders;
+        },
     }
 })
 

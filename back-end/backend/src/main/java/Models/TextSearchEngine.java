@@ -9,13 +9,14 @@ import org.hibernate.criterion.Restrictions;
 
 import java.util.List;
 
-public class TextSearchEngine {
+public class TextSearchEngine extends Criteria {
 
-    Integer userFolderID;
-    private SessionFactory factory=SecurityFilter.getInstance().getSessionFactory();
+    public TextSearchEngine(Integer userFolderID, Integer page) {
+        super(userFolderID, page);
+    }
 
-    public List<EmailHeader> getSearchResults(String target)
-    {
+    @Override
+    public List<EmailHeader> meetCriteria(String target) {
         Session session= factory.openSession();
         org.hibernate.Criteria cr = session.createCriteria(EmailHeader.class)
                 .createAlias("folder","currentFolder")
@@ -24,10 +25,12 @@ public class TextSearchEngine {
 
         Criterion title =Restrictions.ilike("title", target);
         Criterion sender = Restrictions.ilike("currentSender.userName",target);
-
         LogicalExpression orExp = Restrictions.or(title,sender);
         cr.add( orExp );
-        return cr.list();
+        int startIndex=(page*6)-6;
+        List<EmailHeader> filteredMailHeaders = cr.setFirstResult(startIndex).setMaxResults(6).list();
+        System.err.println(userFolderID);
+        System.err.println(filteredMailHeaders.size());
+        return filteredMailHeaders;
     }
-
 }

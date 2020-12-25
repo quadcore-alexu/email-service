@@ -6,6 +6,7 @@ import org.hibernate.criterion.Restrictions;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -16,18 +17,24 @@ public class CriteriaDate extends Criteria{
 
     @Override
     public List<EmailHeader> meetCriteria(String target) {
-        Date date = null;
+        SimpleDateFormat date = null;
+        date =new SimpleDateFormat("dd/MM/yyyy");
+        Calendar c = Calendar.getInstance();
         try {
-             date =new SimpleDateFormat("dd/MM/yyyy").parse(target);
+            c.setTime(date.parse(target));
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        Date dateMin = c.getTime();
+        c.add(Calendar.DATE, 1);  // number of days to add
+        Date dateMax = c.getTime();
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         org.hibernate.Criteria dateCriteria = session.createCriteria(EmailHeader.class);
         dateCriteria.createAlias("folder", "currentFolder")
                 .add(Restrictions.eq("currentFolder.folderID", userFolderID))
-                .add(Restrictions.eq("date",date));
+                .add(Restrictions.gt("date",dateMin))
+                .add(Restrictions.lt("date",dateMax));
         int startIndex=(page*6)-6;
         List<EmailHeader> filteredMailHeaders = dateCriteria.setFirstResult(startIndex).setMaxResults(6).list();
         trans.commit();

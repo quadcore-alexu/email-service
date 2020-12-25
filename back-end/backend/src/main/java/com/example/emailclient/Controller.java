@@ -9,9 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -107,19 +109,34 @@ public class Controller {
 
 
     @RequestMapping(value = "/moveMail",method = RequestMethod.PUT)
-    public void moveMail(int []headersId,int currentFolder,int destinationFolder){
+    public void moveMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder){
         UserSession userSession = new UserSession(1);
-        userSession.moveEmail(headersId,currentFolder,destinationFolder);
+        List<Integer> headersIdList = new ArrayList<Integer>();
+        for (String numStr: headersId.split(",")) {
+            headersIdList.add(Integer.parseInt(numStr));
+        }
+        userSession.moveEmail(headersIdList,currentFolder,destinationFolder);
     }
     @RequestMapping(value = "/copyMail",method = RequestMethod.PUT)
-    public void copyMail(int []headersId,int currentFolder,int destinationFolder){
+    public void copyMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder){
         UserSession userSession = new UserSession(1);
-        userSession.copyEmail(headersId,currentFolder,destinationFolder);
+        List<Integer> headersIdList = new ArrayList<Integer>();
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        for (String numStr: headersId.split(",")) {
+            headersIdList.add(Integer.parseInt(numStr.trim()));
+            System.out.println(Integer.parseInt(numStr.trim()));
+        }
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        userSession.copyEmail(headersIdList,currentFolder,destinationFolder);
     }
     @RequestMapping(value = "/deleteMail",method = RequestMethod.DELETE)
-    public void deleteMail(int []headersId,int currentFolder){
+    public void deleteMail(@RequestParam String headersId, @RequestParam int currentFolder){
         UserSession userSession = new UserSession(1);
-        userSession.deleteEmail(headersId,currentFolder);
+        List<Integer> headersIdList = new ArrayList<Integer>();
+        for (String numStr: headersId.split(",")) {
+            headersIdList.add(Integer.parseInt(numStr));
+        }
+        userSession.deleteEmail(headersIdList,currentFolder);
     }
     @RequestMapping(value = "/addFolder",method = RequestMethod.POST)
     public void addFolder(Map<String,Object> folderMap){
@@ -143,6 +160,12 @@ public class Controller {
     public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria,Boolean order){
         UserSession userSession = new UserSession(1);
         return userSession.loadEmailHeaders(folderIndex,page,criteria,order);
+    }
+
+    @RequestMapping(value = "/filterMailHeaders",method = RequestMethod.GET)
+    public List<EmailHeaderImmutable> filterMailHeaders(int folderIndex,int page,String criteria,String filterKey){
+        UserSession userSession = new UserSession(1);
+        return userSession.filterEmailHeaders(folderIndex,page,criteria,filterKey);
     }
 
     @RequestMapping(value = "/dumpRetrieve", method = RequestMethod.GET)
