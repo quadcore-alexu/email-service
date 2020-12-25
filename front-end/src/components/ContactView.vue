@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       name: this.contact.contactName,
-      emails: this.contact.addresses.replaceAll(";", ";\n"),
+      emails: this.contact.addresses,
       id: this.contact.contactID,
       validForm: false,
       requiredRules: value => !!value || 'Required',
@@ -66,21 +66,25 @@ export default {
       if (this.validForm) {
 
         let map= []
-        if(this.isNew){
-          map={name: this.name,addresses: this.emails }
-          ContactService.addContact(map)
+        if(this.isNew) {
+          map = {name: this.name, addresses: this.emails}
+          ContactService.addContact(map).then(() => {
+            this.back();
+          })
         }
-        else{
-          map={name: this.name,id: this.id,addresses: this.emails }
-          ContactService.editContact(map)
+        else {
+          map = {name: this.name, id: this.id, addresses: this.emails}
+          ContactService.editContact(map).then(() => {
+            this.back();
+          })
         }
-        this.back();
       }
     },
 
     del() {
-      ContactService.deleteContact(this.id)
-      this.back();
+      ContactService.deleteContact(this.id).then(() => {
+        this.back();
+      })
     }
   },
 

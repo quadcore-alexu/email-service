@@ -46,16 +46,23 @@ public class Controller {
     }
 
     @RequestMapping(value = "/getMail", method = RequestMethod.GET, produces = "application/json")
-    public EmailImmutable getMail(int id) {
-        UserSession userSession = new UserSession(1);
-        EmailImmutable emI = new EmailImmutable(userSession.getMail(id));
-        System.out.println("DDDDDDDDDDDDDDDDDDDDDDDD" + emI.getTitle());
-        return emI;
+    public EmailImmutable getMail(int id,String key) {
+
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null) {
+            EmailImmutable emI = new EmailImmutable(userSession.getMail(id));
+            System.out.println("DDDDDDDDDDDDDDDDDDDDDDDD" + emI.getTitle());
+            System.err.println(key);
+            return emI;
+        }
+        return null;
+
     }
 
     @RequestMapping(value = "/sendMail", method = RequestMethod.PUT)
-    public String sendMail( @RequestPart(name ="attachments") MultipartFile[] attachments,
+    public String sendMail( @RequestPart(name ="attachments",required = false) MultipartFile[] attachments,
                             @RequestParam(name ="email") String emailJson,
+                            @RequestParam(name="key" )String key,
                             @RequestPart(name ="receivers") String receiversStr) {
         Map<String, Object> emailMap = null;
         try {
@@ -63,27 +70,37 @@ public class Controller {
         } catch (JsonProcessingException e) {
             return null;
         }
+
         String[] receivers = receiversStr.split(" ");
-        String[] paths = new String[attachments.length];
-        try {
-            int i = 0;
-            for (MultipartFile at: attachments) {
-                SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
-                String fileName = sdf.format(new Date()) + at.getOriginalFilename();
-                String path = FileSaver.saveFile(at, fileName);
-                if (path == null) {
-                    return null;
+        String[] paths = null;
+        if (attachments != null) {
+            paths = new String[attachments.length];
+            try {
+                int i = 0;
+                for (MultipartFile at : attachments) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
+                    String fileName = sdf.format(new Date()) + at.getOriginalFilename();
+                    String path = FileSaver.saveFile(at, fileName);
+                    if (path == null) {
+                        return null;
+                    }
+                    paths[i] = path;
+                    i++;
                 }
-                paths[i] = path;
-                i++;
+            } catch (Exception e) {
+                return null;
             }
-        } catch (Exception e) {
-            return null;
         }
-        UserSession userSession = new UserSession(1);
-        userSession.sendEmail(emailMap, receivers, paths);
-        return "Succeeded";
+        //System.out.println(key);
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null) {
+            userSession.sendEmail(emailMap, receivers, paths);
+            System.out.println(userSession);
+            return "Succeeded";
+        }
+        return "Failed";
     }
+
     @RequestMapping(value = "/drafts",method = RequestMethod.POST)
     public String drafts(@RequestPart(name ="attachments") MultipartFile[] attachments,
                          @RequestParam(name ="email") String emailJson){
@@ -117,38 +134,47 @@ public class Controller {
 
 
     @RequestMapping(value = "/moveMail",method = RequestMethod.PUT)
-    public void moveMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder){
-        UserSession userSession = new UserSession(1);
-        List<Integer> headersIdList = new ArrayList<Integer>();
-        for (String numStr: headersId.split(",")) {
-            headersIdList.add(Integer.parseInt(numStr));
+    public void moveMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder,@RequestParam String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        System.err.println("move mail : "+userSession);
+        if(userSession!=null) {
+            List<Integer> headersIdList = new ArrayList<Integer>();
+            for (String numStr : headersId.split(",")) {
+                headersIdList.add(Integer.parseInt(numStr));
+            }
+            userSession.moveEmail(headersIdList, currentFolder, destinationFolder);
         }
-        userSession.moveEmail(headersIdList,currentFolder,destinationFolder);
+
     }
     @RequestMapping(value = "/copyMail",method = RequestMethod.PUT)
-    public void copyMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder){
-        UserSession userSession = new UserSession(1);
-        List<Integer> headersIdList = new ArrayList<Integer>();
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        for (String numStr: headersId.split(",")) {
-            headersIdList.add(Integer.parseInt(numStr.trim()));
-            System.out.println(Integer.parseInt(numStr.trim()));
+    public void copyMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder,@RequestParam String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        System.err.println("copy mail :"+ userSession);
+        if(userSession!=null) {
+            List<Integer> headersIdList = new ArrayList<Integer>();
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            for (String numStr : headersId.split(",")) {
+                headersIdList.add(Integer.parseInt(numStr.trim()));
+                System.out.println(Integer.parseInt(numStr.trim()));
+            }
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            userSession.copyEmail(headersIdList, currentFolder, destinationFolder);
         }
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        userSession.copyEmail(headersIdList,currentFolder,destinationFolder);
     }
     @RequestMapping(value = "/deleteMail",method = RequestMethod.DELETE)
-    public void deleteMail(@RequestParam String headersId, @RequestParam int currentFolder){
-        UserSession userSession = new UserSession(1);
-        List<Integer> headersIdList = new ArrayList<Integer>();
-        for (String numStr: headersId.split(",")) {
-            headersIdList.add(Integer.parseInt(numStr));
+    public void deleteMail(@RequestParam String headersId, @RequestParam int currentFolder,@RequestParam String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        System.err.println("delete mail :" + userSession);
+        if(userSession!=null) {
+            List<Integer> headersIdList = new ArrayList<Integer>();
+            for (String numStr : headersId.split(",")) {
+                headersIdList.add(Integer.parseInt(numStr));
+            }
+            userSession.deleteEmail(headersIdList, currentFolder);
         }
-        userSession.deleteEmail(headersIdList,currentFolder);
     }
     @RequestMapping(value = "/addFolder",method = RequestMethod.POST)
     public void addFolder(@RequestBody Map<String,Object> folderMap){
-        System.err.println(folderMap);
         UserSession userSession = new UserSession(30);
         userSession.addFolder(folderMap);
     }
@@ -165,38 +191,48 @@ public class Controller {
     }
     @RequestMapping(value = "/addContact",method = RequestMethod.POST)
     public void addContact(@RequestBody Map<String,Object> contactMap){
-        UserSession userSession = new UserSession(1);
+        UserSession userSession = new UserSession(7);
         userSession.addContact(contactMap);
     }
 
     @RequestMapping(value = "/deleteContact",method = RequestMethod.DELETE)
-    public void deleteContact(int contactId){
-        UserSession userSession = new UserSession(1);
+    public void deleteContact(@RequestParam Integer contactId){
+        System.err.println("WE ARE HERE");
+        System.err.println(contactId);
+        UserSession userSession = new UserSession(7);
         userSession.removeContact(contactId);
     }
     @RequestMapping(value = "/editContact",method = RequestMethod.PUT)
     public void editContact(@RequestBody Map<String,Object> contactMap){
-        UserSession userSession = new UserSession(1);
+        UserSession userSession = new UserSession(7);
         userSession.editFolder(contactMap);
     }
 
 
 
     @RequestMapping(value = "/loadMailHeaders",method = RequestMethod.GET)
-    public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria,Boolean order){
-        UserSession userSession = new UserSession(1);
-        return userSession.loadEmailHeaders(folderIndex,page,criteria,order);
+    public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria,Boolean order,String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        System.err.println(userSession);
+        if(userSession!=null) {
+            return userSession.loadEmailHeaders(folderIndex, page, criteria, order);
+        }
+        return null;
     }
 
     @RequestMapping(value = "/filterMailHeaders",method = RequestMethod.GET)
-    public List<EmailHeaderImmutable> filterMailHeaders(int folderIndex,int page,String criteria,String filterKey){
-        UserSession userSession = new UserSession(1);
-        return userSession.filterEmailHeaders(folderIndex,page,criteria,filterKey);
+    public List<EmailHeaderImmutable> filterMailHeaders(int folderIndex,int page,String criteria,String filterKey,String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null) {
+            return userSession.filterEmailHeaders(folderIndex, page, criteria, filterKey);
+        }
+        return null;
     }
 
     @RequestMapping(value = "/loadContacts",method = RequestMethod.GET)
     public List<ContactImmutable> loadContacts(){
-        UserSession userSession = new UserSession(30);
+        UserSession userSession = new UserSession(7);
+        System.err.println(userSession.loadContacts());
         return userSession.loadContacts();
     }
 

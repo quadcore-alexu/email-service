@@ -227,16 +227,17 @@ export default {
         this.selected.forEach(num=> {
           headersID.push(this.emailHeaders[num].emailHeaderID);
         });
+        let user=this.$store.getters.getUser
         switch(this.bulkOperation) {
           case 'move':
             console.log("move");
-            EmailService.moveMails(headersID, this.$store.getters.getFolder-1, folderIndex)
+            EmailService.moveMails(headersID, this.$store.getters.getFolder-1, folderIndex,user.key)
             .then(() => {
                 this.refresh();
             });
             break
           case 'copy':
-            EmailService.copyMails(headersID, this.$store.getters.getFolder-1, folderIndex)
+            EmailService.copyMails(headersID, this.$store.getters.getFolder-1, folderIndex,user.key)
             .then(() => {
                 this.refresh();
             });
@@ -301,7 +302,8 @@ export default {
         if(this.filterDialog && this.selectedFilter == "Date") {
           this.searchKey = this.fileringDate;
         }
-        EmailService.getFilteredMailHeaders(this.$store.getters.getFolder-1, this.page, this.selectedFilter, this.searchKey)
+        let user=this.$store.getters.getUser
+        EmailService.getFilteredMailHeaders(this.$store.getters.getFolder-1, this.page, this.selectedFilter, this.searchKey,user.key)
         .then(response => {
           this.emailHeaders = response.data;
           console.log(response.data);
@@ -316,8 +318,9 @@ export default {
         this.refresh();
       },
       refresh() {
+        let user=this.$store.getters.getUser
         EmailService.getMailHeaders(this.$store.getters.getFolder-1, this.page,
-                                    this.sortingCriteria, this.reverseSorting)
+                                    this.sortingCriteria, this.reverseSorting,user.key)
         .then(response => {
           this.emailHeaders = response.data;
           this.selected = [];
@@ -329,7 +332,8 @@ export default {
         this.selected.forEach(num=> {
           headersID.push(this.emailHeaders[num].emailHeaderID);
         });
-        EmailService.deleteMails(headersID, this.$store.getters.getFolder-1)
+        let user=this.$store.getters.getUser
+        EmailService.deleteMails(headersID, this.$store.getters.getFolder-1,user.key)
         .then(() => {
             this.refresh();
         });

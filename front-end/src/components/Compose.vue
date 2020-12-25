@@ -166,9 +166,11 @@ export default {
       email.content = this.content;
       email.priority = this.priority;
       let receiverStr = '';
+      let user=this.$store.getters.getUser
       this.receivers.forEach(element => receiverStr += element);
       formData.append("email", JSON.stringify(email));
       formData.append("receivers", receiverStr);
+      formData.append("key",user.key);
       this.files.forEach(element => formData.append("attachments", element));
       EmailService.sendMail(formData)
           .then(() => {
