@@ -134,34 +134,44 @@ public class Controller {
 
 
     @RequestMapping(value = "/moveMail",method = RequestMethod.PUT)
-    public void moveMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder){
-        UserSession userSession = new UserSession(1);
-        List<Integer> headersIdList = new ArrayList<Integer>();
-        for (String numStr: headersId.split(",")) {
-            headersIdList.add(Integer.parseInt(numStr));
+    public void moveMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder,@RequestParam String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        System.err.println("move mail : "+userSession);
+        if(userSession!=null) {
+            List<Integer> headersIdList = new ArrayList<Integer>();
+            for (String numStr : headersId.split(",")) {
+                headersIdList.add(Integer.parseInt(numStr));
+            }
+            userSession.moveEmail(headersIdList, currentFolder, destinationFolder);
         }
-        userSession.moveEmail(headersIdList,currentFolder,destinationFolder);
+
     }
     @RequestMapping(value = "/copyMail",method = RequestMethod.PUT)
-    public void copyMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder){
-        UserSession userSession = new UserSession(1);
-        List<Integer> headersIdList = new ArrayList<Integer>();
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        for (String numStr: headersId.split(",")) {
-            headersIdList.add(Integer.parseInt(numStr.trim()));
-            System.out.println(Integer.parseInt(numStr.trim()));
+    public void copyMail(@RequestParam String headersId, @RequestParam int currentFolder, @RequestParam int destinationFolder,@RequestParam String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        System.err.println("copy mail :"+ userSession);
+        if(userSession!=null) {
+            List<Integer> headersIdList = new ArrayList<Integer>();
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            for (String numStr : headersId.split(",")) {
+                headersIdList.add(Integer.parseInt(numStr.trim()));
+                System.out.println(Integer.parseInt(numStr.trim()));
+            }
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            userSession.copyEmail(headersIdList, currentFolder, destinationFolder);
         }
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        userSession.copyEmail(headersIdList,currentFolder,destinationFolder);
     }
     @RequestMapping(value = "/deleteMail",method = RequestMethod.DELETE)
-    public void deleteMail(@RequestParam String headersId, @RequestParam int currentFolder){
-        UserSession userSession = new UserSession(1);
-        List<Integer> headersIdList = new ArrayList<Integer>();
-        for (String numStr: headersId.split(",")) {
-            headersIdList.add(Integer.parseInt(numStr));
+    public void deleteMail(@RequestParam String headersId, @RequestParam int currentFolder,@RequestParam String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        System.err.println("delete mail :" + userSession);
+        if(userSession!=null) {
+            List<Integer> headersIdList = new ArrayList<Integer>();
+            for (String numStr : headersId.split(",")) {
+                headersIdList.add(Integer.parseInt(numStr));
+            }
+            userSession.deleteEmail(headersIdList, currentFolder);
         }
-        userSession.deleteEmail(headersIdList,currentFolder);
     }
     @RequestMapping(value = "/addFolder",method = RequestMethod.POST)
     public void addFolder(@RequestBody Map<String,Object> folderMap){

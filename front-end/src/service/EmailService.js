@@ -73,12 +73,13 @@ class EmailService {
    * @param destinationFolder of the headers
    * @returns response with email headers
    */
-  copyMails(selectedHeaders, currentFolder, destinationFolder) {
+  copyMails(selectedHeaders, currentFolder, destinationFolder,key) {
     return axios.put(API_URL + "copyMail", null, {
         params:{
           headersId: selectedHeaders+'',
           currentFolder: currentFolder,
-          destinationFolder: destinationFolder
+          destinationFolder: destinationFolder,
+            key: key
         }
     });
   }
@@ -89,12 +90,13 @@ class EmailService {
    * @param destinationFolder of the headers
    * @returns response with email headers
    */
-  moveMails(selectedHeaders, currentFolder, destinationFolder) {
+  moveMails(selectedHeaders, currentFolder, destinationFolder,key) {
     return axios.put(API_URL + "moveMail", null, {
         params:{
           headersId: selectedHeaders+'',
           currentFolder: currentFolder,
-          destinationFolder: destinationFolder
+          destinationFolder: destinationFolder,
+            key :key
         }
     });
   }
@@ -105,11 +107,12 @@ class EmailService {
    * @param destinationFolder of the headers
    * @returns response with email headers
    */
-  deleteMails(selectedHeaders, currentFolder) {
+  deleteMails(selectedHeaders, currentFolder,key) {
     return axios.delete(API_URL + "deleteMail", {
         params:{
           headersId: selectedHeaders+'',
           currentFolder: currentFolder,
+            key: key
         }
     });
   }
