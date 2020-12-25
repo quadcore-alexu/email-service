@@ -7,13 +7,13 @@
             v-model="selected"
             active-class="pink--text"
             >
-            <template v-for="(folder) in this.$store.getters.dumpFolders">
-                <v-list-item :key="folder.ID" @click="showFolder(folder.ID)">
+            <template v-for="(folder, index) in this.$store.getters.getUser.folderNames">
+                <v-list-item :key="folder.ID" @click="showFolder(index)">
                 <template>
                     <v-list-item-content>
                     <v-list-item-subtitle
                         class="text--primary"
-                        v-text="folder.name"
+                        v-text="folder.toUpperCase()"
                     ></v-list-item-subtitle>
                     </v-list-item-content>
                 </template>
