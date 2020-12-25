@@ -6,10 +6,11 @@ class EmailService {
    * @param emailID to be fetched
    * @returns success flag
    */
-  getMail(emailID) {
+  getMail(emailID,key) {
     return axios.get(API_URL + "getMail", {
           params:{
-            id: emailID
+            id: emailID,
+            key: key
           }
         });
   }

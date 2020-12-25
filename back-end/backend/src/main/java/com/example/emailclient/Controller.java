@@ -46,11 +46,17 @@ public class Controller {
     }
 
     @RequestMapping(value = "/getMail", method = RequestMethod.GET, produces = "application/json")
-    public EmailImmutable getMail(int id) {
-        UserSession userSession = new UserSession(1);
-        EmailImmutable emI = new EmailImmutable(userSession.getMail(id));
-        System.out.println("DDDDDDDDDDDDDDDDDDDDDDDD" + emI.getTitle());
-        return emI;
+    public EmailImmutable getMail(int id,String key) {
+
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        if(userSession!=null) {
+            EmailImmutable emI = new EmailImmutable(userSession.getMail(id));
+            System.out.println("DDDDDDDDDDDDDDDDDDDDDDDD" + emI.getTitle());
+            System.err.println(key);
+            return emI;
+        }
+        return null;
+
     }
 
     @RequestMapping(value = "/sendMail", method = RequestMethod.PUT)
