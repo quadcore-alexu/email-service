@@ -7,10 +7,10 @@
       </v-col>
       <v-col>
         <h3>
-          QuadCore
           <v-icon>
             mdi-quadcopter
           </v-icon>
+          QuadCore
         </h3>
       </v-col>
       <v-col>
