@@ -302,8 +302,9 @@ export default {
         this.fileringDate = null
       },
       refresh() {
+        let user=this.$store.getters.getUser
         EmailService.getMailHeaders(this.$store.getters.getFolder-2, this.page,
-                                    this.sortingCriteria, this.reverseSorting)
+                                    this.sortingCriteria, this.reverseSorting,user.key)
         .then(response => {
           this.emailHeaders = response.data;
           this.selected = [];

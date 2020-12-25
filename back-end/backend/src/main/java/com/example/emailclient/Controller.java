@@ -200,9 +200,13 @@ public class Controller {
 
 
     @RequestMapping(value = "/loadMailHeaders",method = RequestMethod.GET)
-    public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria,Boolean order){
-        UserSession userSession = new UserSession(79);
-        return userSession.loadEmailHeaders(folderIndex,page,criteria,order);
+    public List<EmailHeaderImmutable> loadMailHeaders(int folderIndex,int page,String criteria,Boolean order,String key){
+        UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
+        System.err.println(userSession);
+        if(userSession!=null) {
+            return userSession.loadEmailHeaders(folderIndex, page, criteria, order);
+        }
+        return null;
     }
 
     @RequestMapping(value = "/filterMailHeaders",method = RequestMethod.GET)

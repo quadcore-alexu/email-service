@@ -33,13 +33,14 @@ class EmailService {
    * @param sortingCriteria to sort by
    * @returns response with email headers
    */
-  getMailHeaders(folderIndex, page, sortingCriteria, order) {
+  getMailHeaders(folderIndex, page, sortingCriteria, order,key) {
     return axios.get(API_URL + "loadMailHeaders", {
         params:{
           folderIndex: folderIndex,
           page: page,
           criteria: sortingCriteria,
-          order: order
+          order: order,
+          key:  key
         },
     });
   }
