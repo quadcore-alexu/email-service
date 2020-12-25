@@ -41,9 +41,9 @@ public class Controller {
     }
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     public String authenticateNewUser(@RequestBody Map<String ,Object> userSignUpInfo) throws ParseException {
-        SecurityFilter.getInstance().createNewUser(userSignUpInfo);
+        boolean status =SecurityFilter.getInstance().createNewUser(userSignUpInfo);
 
-        return "success";
+        return status?"success":"fail";
     }
 
     @RequestMapping(value = "/getMail", method = RequestMethod.GET, produces = "application/json")

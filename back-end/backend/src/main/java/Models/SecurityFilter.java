@@ -52,11 +52,11 @@ public class SecurityFilter {
         return "null";
     }
 
-    public void createNewUser(Map<String,Object> userSignUpInfo) throws ParseException {
+    public boolean createNewUser(Map<String,Object> userSignUpInfo) throws ParseException {
          Session session=factory.openSession();
          Transaction trans = session.beginTransaction();
-         int status=matchesDB((String)userSignUpInfo.get("email"),(String)userSignUpInfo.get("password"));
-         if(status==-1)
+         boolean status=matchesDB((String)userSignUpInfo.get("email"));
+         if(status)
          {
              User user=new User();
              user.setUserName((String)userSignUpInfo.get("name"));
@@ -68,9 +68,12 @@ public class SecurityFilter {
 
              trans.commit();
              session.close();
+             return true;
 
 
          }
+        return false;
+
 
     }
 
@@ -116,6 +119,22 @@ public class SecurityFilter {
     public UserSession getUserSession(String userSessionID)
     {
         return userSessions.get(userSessionID);
+
+    }
+
+    public boolean matchesDB(String email)
+    {
+        Session session = factory.openSession();
+        Transaction trans = session.beginTransaction();
+        String sql = "SELECT * FROM USERS WHERE  user_address = :user_address";
+        SQLQuery query = session.createSQLQuery(sql);
+        query.addEntity(User.class);
+        query.setParameter("user_address", email);
+        List<User> results = query.list();
+        System.out.println(results.size());
+        trans.commit();
+        session.close();
+        return results.size() == 1 ? false : true;
 
     }
 
