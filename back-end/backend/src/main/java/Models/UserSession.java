@@ -102,7 +102,7 @@ public class UserSession {
         }
         EmailHeader emailHeader = createEmailHeader(email);
         emailHeader.setFolder(currentUser.getFolders().get(1));
-        currentUser.getFolders().get(2).getHeaders().add(emailHeader);
+        currentUser.getFolders().get(1).getHeaders().add(emailHeader);
         session.save(emailHeader);
         trans.commit();
         session.close();
