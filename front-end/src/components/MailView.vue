@@ -10,7 +10,7 @@
     <v-spacer/>
     <v-divider/>
     <v-spacer/>
-    <v-card-text style="text-align: left; height: 70%">
+    <v-card-text class="px-2" style="text-align: left; height: 70%">
       <v-card class="pl-0 fill-height" outlined>
         <v-container>
           {{ mail.content }}

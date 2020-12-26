@@ -61,6 +61,7 @@ class FileService {
     }
 
     saveByteArray(fileName, byte) {
+        byte = this.base64ToArrayBuffer(byte);
         let ext = this.getExtension(fileName)
         let mimeType = this.getType(ext)
         let blob = new Blob([byte], {type: mimeType});
@@ -81,6 +82,17 @@ class FileService {
             return this.types.get(ext);
         else
             return 'application/octet-stream'
+    }
+
+
+    base64ToArrayBuffer(base64) {
+        let binaryString = window.atob(base64);
+        let binaryLen = binaryString.length;
+        let bytes = new Uint8Array(binaryLen);
+        for (let i = 0; i < binaryLen; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes;
     }
 }
 
