@@ -13,7 +13,7 @@
     <v-card-text class="px-2" style="text-align: left; height: 70%">
       <v-card class="pl-0 fill-height" outlined>
         <v-container>
-          {{ mail.content }}
+          <pre>{{ mail.content }}</pre>
         </v-container>
       </v-card>
       <v-container class="pl-0" style="position: absolute; bottom: 0;">
@@ -68,7 +68,7 @@ export default {
     showSubject(subject) {
       if (subject !== '') return subject
       else return 'No Subject'
-    }
+    },
   },
 
   computed: {

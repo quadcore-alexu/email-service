@@ -23,8 +23,8 @@
         <v-btn icon @click="applySearch">
                 <v-icon>mdi-magnify</v-icon>
         </v-btn>
-        <v-btn icon v-if="searchKey != ''" @click="clearSearch">
-                <v-icon>mdi-close-box-outline</v-icon>
+        <v-btn icon @click="clearSearch">
+          <v-icon>mdi-close-box-outline</v-icon>
         </v-btn>
         <v-btn icon @click="filterDialog=true" >
               <v-icon>mdi-filter-menu-outline</v-icon>
