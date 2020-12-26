@@ -63,7 +63,7 @@ export default {
   computed: {
     reducedList: {
       get: function () {
-        if (this.searchCriteria !== null && this.searchCriteria !== '') {
+        if (this.searchCriteria) {
           let sc = this.searchCriteria;
           let myList = [];
           this.list.forEach((contact) => {
