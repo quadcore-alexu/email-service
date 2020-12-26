@@ -2,7 +2,7 @@
   <div>
     <v-container>
       <v-text-field v-model="searchCriteria" clearable label="Search"
-                    append-outer-icon="mdi-menu-swap-outline" @click:append-outer="reverse"/>
+                    append-outer-icon="mdi-menu-swap-outline" @click:append-outer="ascending = !ascending"/>
     </v-container>
     <v-card-text>
       <v-card v-if="reducedList.length !== 0" outlined>
@@ -42,6 +42,7 @@ export default {
       list: [],
       searchCriteria: '',
       listKey: 1,
+      ascending: true,
     }
   },
 
@@ -54,9 +55,11 @@ export default {
       this.$root.$emit("addContact");
     },
 
-    reverse() {
-      this.reducedList = this.reducedList.reverse();
-      this.listKey += 1;
+    mySort(list) {
+      if (!this.ascending) {
+        let dummy = [...list];
+        return dummy.reverse();
+      } else return list;
     }
   },
 
@@ -69,8 +72,8 @@ export default {
           this.list.forEach((contact) => {
             if (contact.contactName.includes(sc) || contact.addresses.includes(sc)) myList.push(contact);
           })
-          return myList;
-        } else return this.list;
+          return this.mySort(myList);
+        } else return this.mySort(this.list);
       },
       set: function () {
         //
