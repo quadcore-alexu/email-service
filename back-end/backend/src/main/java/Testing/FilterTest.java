@@ -21,9 +21,9 @@ public class FilterTest {
     //test it using a user in your db
 
     @Test
-    public void testSubjectFilter()
-    {
+    public void testSubjectFilter() throws ParseException {
         //addToDB();
+        //check their folder id in db otherwise the test fails
         Criteria subjectFilter=new CriteriaSubject(141,1);
         List<EmailHeader> result=subjectFilter.meetCriteria("hello");
         Assert.assertEquals(1,result.size());
@@ -32,7 +32,7 @@ public class FilterTest {
     }
      @Test
     public void testSenderFilter()
-    {
+    {   //check their folder id in db otherwise the test fails
         Criteria senderFilter=new CriteriaSender(139,1);
         List<EmailHeader> result=senderFilter.meetCriteria("meen");
         Assert.assertEquals(1,result.size());
@@ -49,7 +49,7 @@ public class FilterTest {
         Transaction trans  = session.beginTransaction();
 
         User user2 = new User();
-        user2.setAddress("test2@g.com");
+        user2.setAddress("testfinal1@g.com");
         try {
             user2.setDOB(new SimpleDateFormat("dd/MM/yyyy").parse("14/11/1999"));
         } catch (ParseException e) {
@@ -61,7 +61,7 @@ public class FilterTest {
 
 
         User user3 = new User();
-        user3.setAddress("test3@g.com");
+        user3.setAddress("testfinal2@g.com");
         try {
             user3.setDOB(new SimpleDateFormat("dd/MM/yyyy").parse("14/11/1999"));
         } catch (ParseException e) {
@@ -72,14 +72,14 @@ public class FilterTest {
         session.save(user3);
 
         User user = new User();
-        user.setAddress("testdate@g.com");
+        user.setAddress("testfinal3@g.com");
         try {
             user.setDOB(new SimpleDateFormat("dd/MM/yyyy").parse("14/11/1999"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
         user.setPassword("test");
-        user.setUserName("testSortSender");
+        user.setUserName("no one");
         session.save(user);
         Folder f = new Folder();
         f.setOwner(user);
