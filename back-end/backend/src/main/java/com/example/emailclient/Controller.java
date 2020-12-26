@@ -50,8 +50,8 @@ public class Controller {
     public EmailImmutable getMail(int id,String key) {
         UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
         if(userSession!=null) {
-            System.err.println(id);
             EmailImmutable emI = new EmailImmutable(userSession.getMail(id));
+            System.err.println(emI.getContent());
             return emI;
         }
         return null;
@@ -60,7 +60,7 @@ public class Controller {
     @RequestMapping(value = "/sendMail", method = RequestMethod.POST)
     public String sendMail( @RequestPart(name ="attachments",required = false) MultipartFile[] attachments,
                             @RequestParam(name ="email") String emailJson,
-                                @RequestParam(name="key" )String key,
+                            @RequestParam(name="key" )String key,
                             @RequestPart(name ="receivers") String receiversStr) {
         Map<String, Object> emailMap = null;
         try {
@@ -131,6 +131,9 @@ public class Controller {
         UserSession userSession = SecurityFilter.getInstance().getUserSession(key);
         if(userSession!=null) {
             List<Integer> headersIdList = new ArrayList<Integer>();
+            for (String numStr : headersId.split(",")) {
+                headersIdList.add(Integer.parseInt(numStr));
+            }
             userSession.copyEmail(headersIdList, currentFolder, destinationFolder);
         }
     }

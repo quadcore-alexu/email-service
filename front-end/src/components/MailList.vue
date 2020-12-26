@@ -220,7 +220,6 @@ export default {
     mounted() {
       this.selected = [];
       this.refresh();
-
       this.$root.$on("FolderSelected", (folderIndex) => {
         let headersID = []
         this.selected.forEach(num=> {

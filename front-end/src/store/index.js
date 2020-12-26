@@ -11,8 +11,7 @@ const store = new Vuex.Store({
     state: {
         dark: false,
         user: null,
-        folder: 2,
-        dumpFolders: [{"ID": 0 ,"name" : "Inbox"}, {"ID": 1 ,"name" : "Sent"}, {"ID": 2 ,"name" : "User defined"}]
+        folder: 1
     },
     mutations: {
         setDark(state, payload) {
@@ -27,7 +26,7 @@ const store = new Vuex.Store({
         resetUser(state) {
             state.user = null;
             state.openedMail = null;
-            state.folder = 2;
+            state.folder = 1;
         },
         resetDark(state) {
             state.dark = null;
