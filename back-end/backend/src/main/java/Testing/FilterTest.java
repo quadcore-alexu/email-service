@@ -1,6 +1,9 @@
-package Database;
+package Testing;
 
 import Models.*;
+import Models.Filtering.Criteria;
+import Models.Filtering.CriteriaSender;
+import Models.Filtering.CriteriaSubject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

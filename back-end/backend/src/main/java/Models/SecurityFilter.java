@@ -116,6 +116,7 @@ public class SecurityFilter {
         return basicInfo;
 
     }
+
     public UserSession getUserSession(String userSessionID)
     {
         return userSessions.get(userSessionID);

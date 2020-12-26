@@ -1,7 +1,6 @@
-package Models;
+package Models.Sorting;
 
 import Models.EmailHeader;
-import Models.SortCriteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;

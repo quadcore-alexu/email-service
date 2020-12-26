@@ -1,12 +1,14 @@
 package Models;
 
+import Models.Filtering.*;
 import Models.Immutables.ContactImmutable;
 import Models.Immutables.EmailHeaderImmutable;
+import Models.Sorting.*;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -194,7 +196,6 @@ public class UserSession {
         Session session = factory.openSession();
         Transaction trans = session.beginTransaction();
         Folder folder = session.find(Folder.class, currentUser.getFolders().get((int)folderMap.get("id")).getFolderID());
-        //folder.setOwner(currentUser);
         folder.setFolderName(folderMap.get("name").toString());
         session.save(folder);
         trans.commit();

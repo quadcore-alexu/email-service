@@ -1,5 +1,6 @@
-package Models;
+package Models.Filtering;
 
+import Models.EmailHeader;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;

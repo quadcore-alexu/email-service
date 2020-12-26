@@ -1,8 +1,8 @@
-package Models;
+package Models.Filtering;
 
 
+import Models.EmailHeader;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
