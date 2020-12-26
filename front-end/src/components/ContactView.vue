@@ -19,7 +19,7 @@
           </v-row>
           <v-row>
             <v-textarea v-model="emails" hint="Enter emails separated by semicolon or newline"
-                        class="overflow-y-auto" label="Emails" persistent-hint rows="5"/>
+                        :rules="[requiredRules]" class="overflow-y-auto" label="Emails" persistent-hint rows="5"/>
           </v-row>
         </v-form>
       </v-container>

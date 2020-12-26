@@ -1,10 +1,14 @@
 <template>
   <div>
+    <v-container>
+      <v-text-field v-model="searchCriteria" clearable label="Search"
+      />
+    </v-container>
     <v-card-text>
-      <v-card v-if="list.length !== 0" outlined>
+      <v-card v-if="reducedList.length !== 0" outlined>
         <v-list class="overflow-y-auto" dense max-height="256px" nav>
           <v-list-item
-              v-for="item in list"
+              v-for="item in reducedList"
               :key="item.contactID"
               link
               @click="viewContact(item)">
@@ -15,7 +19,8 @@
           </v-list-item>
         </v-list>
       </v-card>
-      <v-container v-else><h3>Tap ADD to create new contact</h3></v-container>
+      <v-container v-else-if="list.length === 0"><h3>Tap ADD to create new contact</h3></v-container>
+      <v-container v-else><h4>No results match your criteria</h4></v-container>
     </v-card-text>
     <v-card-actions>
       <v-container>
@@ -34,7 +39,8 @@ export default {
 
   data() {
     return {
-      list: []
+      list: [],
+      searchCriteria: '',
     }
   },
 
@@ -45,15 +51,33 @@ export default {
     addNew() {
 
       this.$root.$emit("addContact");
+    },
+  },
+
+  computed: {
+    reducedList: {
+      get: function () {
+        if (this.searchCriteria !== '') {
+          let sc = this.searchCriteria;
+          let myList = [];
+          this.list.forEach((contact) => {
+            if (contact.contactName.includes(sc) || contact.addresses.includes(sc)) myList.push(contact);
+          })
+          return myList;
+        } else return this.list;
+      },
+      set: function () {
+        //
+      }
     }
   },
+
   created() {
-    let user=this.$store.getters.getUser
+    let user = this.$store.getters.getUser
     ContactService.loadContacts(user.key)
-    .then(response => {
-    this.list = response.data;
-      console.log(this.list)
-    })
+        .then(response => {
+          this.list = response.data.sort((a, b) => (a.contactName <= b.contactName) ? -1 : 1);
+        })
   }
 }
 </script>
