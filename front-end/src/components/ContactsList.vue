@@ -2,11 +2,11 @@
   <div>
     <v-container>
       <v-text-field v-model="searchCriteria" clearable label="Search"
-      />
+                    append-outer-icon="mdi-menu-swap-outline" @click:append-outer="reverse"/>
     </v-container>
     <v-card-text>
       <v-card v-if="reducedList.length !== 0" outlined>
-        <v-list class="overflow-y-auto" dense max-height="256px" nav>
+        <v-list :key="listKey" class="overflow-y-auto" dense max-height="256px" nav>
           <v-list-item
               v-for="item in reducedList"
               :key="item.contactID"
@@ -41,6 +41,7 @@ export default {
     return {
       list: [],
       searchCriteria: '',
+      listKey: 1,
     }
   },
 
@@ -52,12 +53,17 @@ export default {
 
       this.$root.$emit("addContact");
     },
+
+    reverse() {
+      this.reducedList = this.reducedList.reverse();
+      this.listKey += 1;
+    }
   },
 
   computed: {
     reducedList: {
       get: function () {
-        if (this.searchCriteria !== '') {
+        if (this.searchCriteria !== null && this.searchCriteria !== '') {
           let sc = this.searchCriteria;
           let myList = [];
           this.list.forEach((contact) => {
